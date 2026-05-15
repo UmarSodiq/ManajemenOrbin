@@ -1,0 +1,8 @@
+{
+  "name": "Organisasi Remaja Britania Nglempong",
+  "description": "Sistem manajemen organisasi pemuda terpadu untuk Bendahara dan Sekretaris dengan fitur keuangan, rapat, dan pengumuman real-time.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

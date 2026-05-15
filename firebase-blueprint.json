@@ -1,0 +1,112 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "role": { "type": "string", "enum": ["bendahara", "sekretaris"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["username", "role", "createdAt"]
+    },
+    "Anggota": {
+      "title": "Anggota",
+      "description": "Organization member",
+      "type": "object",
+      "properties": {
+        "namaLengkap": { "type": "string" },
+        "jabatan": { "type": "string" },
+        "status": { "type": "string", "enum": ["aktif", "nonaktif"] },
+        "tanggalBergabung": { "type": "string", "format": "date-time" }
+      },
+      "required": ["namaLengkap", "jabatan", "status", "tanggalBergabung"]
+    },
+    "Iuran": {
+      "title": "Iuran",
+      "description": "Member dues payment",
+      "type": "object",
+      "properties": {
+        "anggotaId": { "type": "string" },
+        "periode": { "type": "string" },
+        "tanggalBayar": { "type": "string", "format": "date-time" },
+        "dicatatOleh": { "type": "string" }
+      },
+      "required": ["anggotaId", "periode", "tanggalBayar", "dicatatOleh"]
+    },
+    "KasMasuk": {
+      "title": "Kas Masuk",
+      "description": "Income transaction",
+      "type": "object",
+      "properties": {
+        "keterangan": { "type": "string" },
+        "jumlah": { "type": "number" },
+        "tanggal": { "type": "string", "format": "date-time" },
+        "dicatatOleh": { "type": "string" }
+      },
+      "required": ["keterangan", "jumlah", "tanggal", "dicatatOleh"]
+    },
+    "KasKeluar": {
+      "title": "Kas Keluar",
+      "description": "Expense transaction",
+      "type": "object",
+      "properties": {
+        "keterangan": { "type": "string" },
+        "jumlah": { "type": "number" },
+        "tanggal": { "type": "string", "format": "date-time" },
+        "dicatatOleh": { "type": "string" }
+      },
+      "required": ["keterangan", "jumlah", "tanggal", "dicatatOleh"]
+    },
+    "Rapat": {
+      "title": "Rapat",
+      "description": "Meeting record",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "tanggal": { "type": "string", "format": "date-time" },
+        "waktuMulai": { "type": "string" },
+        "waktuSelesai": { "type": "string" },
+        "tempat": { "type": "string" },
+        "dibuatOleh": { "type": "string" }
+      },
+      "required": ["judul", "tanggal", "waktuMulai", "waktuSelesai", "tempat", "dibuatOleh"]
+    },
+    "Presensi": {
+      "title": "Presensi",
+      "description": "Attendance record per meeting",
+      "type": "object",
+      "properties": {
+        "rapatId": { "type": "string" },
+        "anggotaId": { "type": "string" },
+        "status": { "type": "string", "enum": ["hadir", "tidak_hadir"] },
+        "dicatatOleh": { "type": "string" }
+      },
+      "required": ["rapatId", "anggotaId", "status", "dicatatOleh"]
+    },
+    "Pengumuman": {
+      "title": "Pengumuman",
+      "description": "Organization announcement",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "isi": { "type": "string" },
+        "tanggalDibuat": { "type": "string", "format": "date-time" },
+        "tanggalDiperbarui": { "type": "string", "format": "date-time" },
+        "dibuatOleh": { "type": "string" }
+      },
+      "required": ["judul", "isi", "tanggalDibuat", "tanggalDiperbarui", "dibuatOleh"]
+    }
+  },
+  "firestore": {
+    "users": { "schema": "User", "description": "User profiles" },
+    "anggota": { "schema": "Anggota", "description": "Members" },
+    "iuran": { "schema": "Iuran", "description": "Member dues" },
+    "kasMasuk": { "schema": "KasMasuk", "description": "Income records" },
+    "kasKeluar": { "schema": "KasKeluar", "description": "Expense records" },
+    "rapat": { "schema": "Rapat", "description": "Meeting records" },
+    "presensi": { "schema": "Presensi", "description": "Attendance records" },
+    "pengumuman": { "schema": "Pengumuman", "description": "Announcements" }
+  }
+}
