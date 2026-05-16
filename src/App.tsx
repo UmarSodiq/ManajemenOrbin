@@ -78,80 +78,76 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode,
   return <Layout>{children}</Layout>;
 }
 
-import { ThemeProvider } from './contexts/ThemeContext';
-
 export default function App() {
   const { user, role } = useAuth();
 
   return (
-    <ThemeProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={!user ? <LoginForm /> : <Navigate replace to="/" />} />
-          
-          <Route path="/" element={
-            <ProtectedRoute>
-              {role === 'bendahara' ? <Navigate replace to="/bendahara" /> : <Navigate replace to="/sekretaris" />}
-            </ProtectedRoute>
-          } />
+    <Router>
+      <Routes>
+        <Route path="/login" element={!user ? <LoginForm /> : <Navigate replace to="/" />} />
+        
+        <Route path="/" element={
+          <ProtectedRoute>
+            {role === 'bendahara' ? <Navigate replace to="/bendahara" /> : <Navigate replace to="/sekretaris" />}
+          </ProtectedRoute>
+        } />
 
-          {/* Bendahara Routes */}
-          <Route path="/bendahara" element={
-            <ProtectedRoute requiredRole="bendahara">
-              <BendaharaDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/bendahara/kas-masuk" element={
-            <ProtectedRoute requiredRole="bendahara">
-              <TransactionPage type="masuk" />
-            </ProtectedRoute>
-          } />
-          <Route path="/bendahara/iuran" element={
-            <ProtectedRoute requiredRole="bendahara">
-              <IuranList />
-            </ProtectedRoute>
-          } />
-          <Route path="/bendahara/kas-keluar" element={
-            <ProtectedRoute requiredRole="bendahara">
-              <TransactionPage type="keluar" />
-            </ProtectedRoute>
-          } />
-          <Route path="/bendahara/laporan" element={
-            <ProtectedRoute requiredRole="bendahara">
-              <LaporanKeuangan />
-            </ProtectedRoute>
-          } />
+        {/* Bendahara Routes */}
+        <Route path="/bendahara" element={
+          <ProtectedRoute requiredRole="bendahara">
+            <BendaharaDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/bendahara/kas-masuk" element={
+          <ProtectedRoute requiredRole="bendahara">
+            <TransactionPage type="masuk" />
+          </ProtectedRoute>
+        } />
+        <Route path="/bendahara/iuran" element={
+          <ProtectedRoute requiredRole="bendahara">
+            <IuranList />
+          </ProtectedRoute>
+        } />
+        <Route path="/bendahara/kas-keluar" element={
+          <ProtectedRoute requiredRole="bendahara">
+            <TransactionPage type="keluar" />
+          </ProtectedRoute>
+        } />
+        <Route path="/bendahara/laporan" element={
+          <ProtectedRoute requiredRole="bendahara">
+            <LaporanKeuangan />
+          </ProtectedRoute>
+        } />
 
-          {/* Sekretaris Routes */}
-          <Route path="/sekretaris" element={
-            <ProtectedRoute requiredRole="sekretaris">
-              <SekretarisDashboard />
-            </ProtectedRoute>
-          } />
-          <Route path="/sekretaris/anggota" element={
-            <ProtectedRoute requiredRole="sekretaris">
-              <AnggotaList />
-            </ProtectedRoute>
-          } />
-          <Route path="/sekretaris/rapat" element={
-            <ProtectedRoute requiredRole="sekretaris">
-              <RapatManager />
-            </ProtectedRoute>
-          } />
-          <Route path="/sekretaris/presensi" element={
-            <ProtectedRoute requiredRole="sekretaris">
-              <PresensiList />
-            </ProtectedRoute>
-          } />
-          <Route path="/sekretaris/pengumuman" element={
-            <ProtectedRoute requiredRole="sekretaris">
-              <PengumumanList />
-            </ProtectedRoute>
-          } />
+        {/* Sekretaris Routes */}
+        <Route path="/sekretaris" element={
+          <ProtectedRoute requiredRole="sekretaris">
+            <SekretarisDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/sekretaris/anggota" element={
+          <ProtectedRoute requiredRole="sekretaris">
+            <AnggotaList />
+          </ProtectedRoute>
+        } />
+        <Route path="/sekretaris/rapat" element={
+          <ProtectedRoute requiredRole="sekretaris">
+            <RapatManager />
+          </ProtectedRoute>
+        } />
+        <Route path="/sekretaris/presensi" element={
+          <ProtectedRoute requiredRole="sekretaris">
+            <PresensiList />
+          </ProtectedRoute>
+        } />
+        <Route path="/sekretaris/pengumuman" element={
+          <ProtectedRoute requiredRole="sekretaris">
+            <PengumumanList />
+          </ProtectedRoute>
+        } />
 
-          <Route path="*" element={<Navigate replace to="/" />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
+        <Route path="*" element={<Navigate replace to="/" />} />
+      </Routes>
+    </Router>
   );
 }

@@ -119,7 +119,7 @@ export default function RapatManager() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-[var(--bg-main)] min-h-full transition-colors">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-full">
       {/* Hidden Export View */}
       <div className="fixed -left-[2000px] top-0 pointer-events-none">
         <div 
@@ -193,8 +193,8 @@ export default function RapatManager() {
       </div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)]">Manajemen Rapat</h1>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1">Kelola jadwal rapat dan notulensi resmi organisasi.</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Manajemen Rapat</h1>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">Kelola jadwal rapat dan notulensi resmi organisasi.</p>
         </div>
         <button
           onClick={() => handleOpenRapatModal()}
@@ -207,28 +207,28 @@ export default function RapatManager() {
 
       <div className="grid grid-cols-1 gap-3 sm:gap-4">
         {isLoading ? (
-          <div className="p-12 text-center text-[var(--text-muted)] italic bg-[var(--bg-card)] rounded-2xl border border-[var(--border-base)] text-sm">Memuat data rapat...</div>
+          <div className="p-12 text-center text-gray-400 italic bg-white rounded-2xl border border-gray-200 text-sm">Memuat data rapat...</div>
         ) : rapatList.length === 0 ? (
-          <div className="p-12 text-center text-[var(--text-muted)] italic bg-[var(--bg-card)] rounded-2xl border border-[var(--border-base)] text-sm">Belum ada rapat terjadwal.</div>
+          <div className="p-12 text-center text-gray-400 italic bg-white rounded-2xl border border-gray-200 text-sm">Belum ada rapat terjadwal.</div>
         ) : rapatList.map((rapat) => (
           <motion.div
             layout
             key={rapat.id}
-            className="card-base group hover:border-blue-600 dark:hover:border-blue-400 transition-all"
+            className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden group hover:border-blue-600 transition-all"
           >
             <div className="p-4 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 sm:gap-6">
               <div className="flex items-start gap-3 sm:gap-5 flex-1 w-full">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-50 dark:bg-white/5 flex flex-col items-center justify-center border border-[var(--border-base)] flex-shrink-0">
-                  <span className="text-[8px] sm:text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-tighter">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-50 flex flex-col items-center justify-center border border-gray-100 flex-shrink-0">
+                  <span className="text-[8px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
                     {rapat.tanggal.toLocaleString('id-ID', { month: 'short' })}
                   </span>
-                  <span className="text-base sm:text-lg font-bold text-[var(--text-primary)] leading-tight">
+                  <span className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
                     {rapat.tanggal.getDate()}
                   </span>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-sm sm:text-base font-bold text-[var(--text-primary)] truncate">{rapat.judul}</h3>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-1 sm:mt-1.5 text-[var(--text-secondary)]">
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 truncate">{rapat.judul}</h3>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-1 sm:mt-1.5 text-gray-500">
                     <div className="flex items-center gap-1.5 text-[10px] sm:text-xs">
                       <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-600" />
                       <span className="font-mono font-medium">{rapat.waktuMulai} - {rapat.waktuSelesai}</span>
@@ -280,37 +280,37 @@ export default function RapatManager() {
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-[var(--bg-card)] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative z-10 border border-[var(--border-base)]">
-              <div className="bg-slate-900 dark:bg-slate-800 p-6 text-white flex justify-between items-center">
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden relative z-10 border border-gray-200">
+              <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
                 <h2 className="text-xl font-bold tracking-tight">{editingRapat ? 'Ubah Informasi Rapat' : 'Penjadwalan Rapat'}</h2>
               </div>
               <form onSubmit={handleRapatSubmit} className="p-8 space-y-5">
                 <div>
-                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Judul Pertemuan</label>
-                  <input type="text" value={judul} onChange={(e) => setJudul(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium text-[var(--text-primary)]" placeholder="Rapat Rutin Bulanan" />
+                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Judul Pertemuan</label>
+                  <input type="text" value={judul} onChange={(e) => setJudul(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium" placeholder="Rapat Rutin Bulanan" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Tanggal</label>
-                    <input type="date" value={tanggal} onChange={(e) => setTanggal(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium text-[var(--text-primary)]" />
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Tanggal</label>
+                    <input type="date" value={tanggal} onChange={(e) => setTanggal(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Lokasi</label>
-                    <input type="text" value={tempat} onChange={(e) => setTempat(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium text-[var(--text-primary)]" placeholder="Aula Utama" />
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Lokasi</label>
+                    <input type="text" value={tempat} onChange={(e) => setTempat(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-medium" placeholder="Aula Utama" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Waktu Mulai</label>
-                    <input type="time" value={waktuMulai} onChange={(e) => setWaktuMulai(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-mono font-bold text-[var(--text-primary)]" />
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Waktu Mulai</label>
+                    <input type="time" value={waktuMulai} onChange={(e) => setWaktuMulai(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-mono font-bold" />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Waktu Selesai</label>
-                    <input type="time" value={waktuSelesai} onChange={(e) => setWaktuSelesai(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-mono font-bold text-[var(--text-primary)]" />
+                    <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Waktu Selesai</label>
+                    <input type="time" value={waktuSelesai} onChange={(e) => setWaktuSelesai(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-600 outline-none transition-all text-sm font-mono font-bold" />
                   </div>
                 </div>
                 <div className="pt-4 flex gap-3">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-6 py-3 border border-[var(--border-base)] rounded-xl font-bold text-[var(--text-secondary)] hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Batal</button>
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-6 py-3 border border-gray-200 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-all">Batal</button>
                   <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all">Simpan Jadwal</button>
                 </div>
               </form>
@@ -324,8 +324,8 @@ export default function RapatManager() {
         {isNotulensiModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNotulensiModalOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-[var(--bg-card)] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 border border-[var(--border-base)]">
-              <div className="bg-slate-900 dark:bg-slate-800 p-6 text-white flex justify-between items-center">
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 border border-gray-200">
+              <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
                 <div>
                   <h2 className="text-lg font-bold tracking-tight">Lembar Notulensi</h2>
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{selectedRapat?.judul} | {selectedRapat && formatDate(selectedRapat.tanggal)}</p>
@@ -344,20 +344,20 @@ export default function RapatManager() {
                 </div>
               </div>
               <form onSubmit={handleNotulensiSubmit} id="notulensi-area" className="p-8 space-y-6 max-h-[70vh] overflow-y-auto">
-                <div className="p-6 bg-slate-50 dark:bg-white/5 rounded-xl border border-[var(--border-base)]">
-                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-3">Agenda Utama</label>
-                  <textarea value={agenda} onChange={(e) => setAgenda(e.target.value)} className="w-full px-0 py-0 bg-transparent border-none focus:ring-0 text-[var(--text-primary)] font-semibold min-h-[60px]" placeholder="Masukkan poin agenda..." />
+                <div className="p-6 bg-slate-50 rounded-xl border border-gray-100">
+                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Agenda Utama</label>
+                  <textarea value={agenda} onChange={(e) => setAgenda(e.target.value)} className="w-full px-0 py-0 bg-transparent border-none focus:ring-0 text-slate-800 font-semibold min-h-[60px]" placeholder="Masukkan poin agenda..." />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Risalah Pembahasan</label>
-                  <textarea value={pembahasan} onChange={(e) => setPembahasan(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl min-h-[150px] text-sm text-[var(--text-primary)] focus:ring-2 focus:ring-blue-600 outline-none transition-all" placeholder="Tuliskan detail jalannya diskusi..." />
+                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Risalah Pembahasan</label>
+                  <textarea value={pembahasan} onChange={(e) => setPembahasan(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl min-h-[150px] text-sm focus:ring-2 focus:ring-blue-600 outline-none transition-all" placeholder="Tuliskan detail jalannya diskusi..." />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-widest mb-2">Simpulan & Keputusan Akhir</label>
-                  <textarea value={keputusan} onChange={(e) => setKeputusan(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border border-[var(--border-base)] rounded-xl min-h-[100px] text-sm font-semibold text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-blue-600 outline-none transition-all" placeholder="Hasil kesepakatan akhir..." />
+                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Simpulan & Keputusan Akhir</label>
+                  <textarea value={keputusan} onChange={(e) => setKeputusan(e.target.value)} className="w-full px-4 py-3 bg-slate-50 border border-gray-200 rounded-xl min-h-[100px] text-sm font-semibold text-blue-700 focus:ring-2 focus:ring-blue-600 outline-none transition-all" placeholder="Hasil kesepakatan akhir..." />
                 </div>
                 <div className="pt-4 flex gap-3">
-                  <button type="button" onClick={() => setIsNotulensiModalOpen(false)} className="flex-1 px-6 py-3 border border-[var(--border-base)] rounded-xl font-bold text-[var(--text-secondary)] hover:bg-slate-50 dark:hover:bg-white/5 transition-all">Batal</button>
+                  <button type="button" onClick={() => setIsNotulensiModalOpen(false)} className="flex-1 px-6 py-3 border border-gray-200 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-all">Batal</button>
                   <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg shadow-slate-100 hover:bg-slate-800 transition-all">Perbarui Notulensi</button>
                 </div>
               </form>
