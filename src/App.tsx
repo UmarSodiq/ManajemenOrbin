@@ -17,6 +17,7 @@ import PresensiList from './components/rapat/PresensiList';
 import PengumumanList from './components/pengumuman/PengumumanList';
 import BendaharaDashboard from './components/dashboard/BendaharaDashboard';
 import SekretarisDashboard from './components/dashboard/SekretarisDashboard';
+import GuidePage from './components/shared/GuidePage';
 import { Role } from './types';
 
 // Placeholder components for routes
@@ -143,6 +144,12 @@ export default function App() {
         <Route path="/sekretaris/pengumuman" element={
           <ProtectedRoute requiredRole="sekretaris">
             <PengumumanList />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/guide" element={
+          <ProtectedRoute>
+            <GuidePage />
           </ProtectedRoute>
         } />
 

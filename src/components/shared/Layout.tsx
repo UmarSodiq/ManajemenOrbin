@@ -17,7 +17,8 @@ import {
   Megaphone,
   LogOut,
   Menu,
-  X
+  X,
+  HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import ConnectionBanner from './ConnectionBanner';
@@ -123,6 +124,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
             </div>
+            <Link
+              to="/guide"
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium group mb-2",
+                location.pathname === '/guide'
+                  ? "bg-amber-50 text-amber-600"
+                  : "text-gray-500 hover:text-slate-900 hover:bg-amber-50"
+              )}
+            >
+              <HelpCircle className={cn(
+                "w-5 h-5 transition-colors",
+                location.pathname === '/guide' ? "text-amber-600" : "text-gray-400 group-hover:text-slate-900"
+              )} />
+              Petunjuk Penggunaan
+            </Link>
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all group"
@@ -181,6 +197,19 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </Link>
                   ))}
                   <div className="pt-8 mt-8 border-t border-gray-100">
+                    <Link
+                      to="/guide"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center gap-6 px-6 py-4 rounded-2xl text-lg font-medium mb-4",
+                        location.pathname === '/guide'
+                          ? "bg-amber-50 text-amber-600"
+                          : "text-gray-500"
+                      )}
+                    >
+                      <HelpCircle className="w-6 h-6" />
+                      Petunjuk Penggunaan
+                    </Link>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-6 px-6 py-4 rounded-2xl text-lg font-medium text-red-600 bg-red-50"
