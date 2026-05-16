@@ -103,6 +103,56 @@ service cloud.firestore {
              data.dibuatOleh == request.auth.uid;
     }
 
+    function isValidAsset(data) {
+      return data.keys().hasAll(['namaBarang', 'lokasi', 'tanggalInput', 'dicatatOleh']) &&
+             data.keys().size() == 4 &&
+             data.namaBarang is string && data.namaBarang.size() >= 1 && data.namaBarang.size() <= 100 &&
+             data.lokasi is string && data.lokasi.size() >= 1 && data.lokasi.size() <= 100 &&
+             data.tanggalInput is timestamp &&
+             data.dicatatOleh == request.auth.uid;
+    }
+
+    function isValidGallery(data) {
+      return data.keys().hasAll(['judul', 'imageUrl', 'tanggalKegiatan', 'tanggalUpload', 'diunggahOleh']) &&
+             data.keys().size() <= 6 &&
+             data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
+             data.imageUrl is string && data.imageUrl.size() >= 1 && data.imageUrl.size() <= 1000 &&
+             data.tanggalKegiatan is string &&
+             data.tanggalUpload is timestamp &&
+             data.diunggahOleh == request.auth.uid &&
+             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 500));
+    }
+
+    function isValidKegiatan(data) {
+      return data.keys().hasAll(['judul', 'kategori', 'tanggal', 'dibuatOleh']) &&
+             data.keys().size() <= 5 &&
+             data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
+             data.kategori in ['Rutin', 'Khusus', 'Sosial', 'Rapat'] &&
+             data.tanggal is string &&
+             data.dibuatOleh == request.auth.uid &&
+             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 500));
+    }
+
+    function isValidPolling(data) {
+      return data.keys().hasAll(['judul', 'tipe', 'status', 'createdAt', 'dibuatOleh']) &&
+             data.keys().size() <= 7 &&
+             data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 200 &&
+             data.tipe in ['pilihan_ganda', 'manual'] &&
+             data.status in ['aktif', 'selesai'] &&
+             data.createdAt is timestamp &&
+             data.dibuatOleh == request.auth.uid &&
+             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 1000)) &&
+             (!data.keys().contains('pilihan') || (data.pilihan is list && data.pilihan.size() <= 20));
+    }
+
+    function isValidVote(data) {
+      return data.keys().hasAll(['pilihan', 'timestamp']) &&
+             data.keys().size() <= 3 &&
+             data.pilihan is string && data.pilihan.size() >= 1 && data.pilihan.size() <= 200 &&
+             data.timestamp == request.time &&
+             (!data.keys().contains('voterName') || (data.voterName is string && data.voterName.size() <= 100));
+    }
+
     // --- Collections ---
 
     match /users/{userId} {
@@ -163,6 +213,44 @@ service cloud.firestore {
       allow update: if isSekretaris() && isValidPengumuman(incoming()) && 
                     incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'isi', 'tanggalDiperbarui']);
       allow delete: if isSekretaris();
+    }
+
+    match /assets/{assetId} {
+      allow read: if isSignedIn();
+      allow create: if (isSekretaris() || isBendahara()) && isValidAsset(incoming());
+      allow update: if (isSekretaris() || isBendahara()) && isValidAsset(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['namaBarang', 'lokasi']);
+      allow delete: if (isSekretaris() || isBendahara());
+    }
+
+    match /galeri/{photoId} {
+      allow read: if isSignedIn();
+      allow create: if (isSekretaris() || isBendahara()) && isValidGallery(incoming());
+      allow update: if (isSekretaris() || isBendahara()) && isValidGallery(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'deskripsi', 'imageUrl', 'tanggalKegiatan']);
+      allow delete: if (isSekretaris() || isBendahara());
+    }
+
+    match /kegiatan/{eventId} {
+      allow read: if isSignedIn();
+      allow create: if (isSekretaris() || isBendahara()) && isValidKegiatan(incoming());
+      allow update: if (isSekretaris() || isBendahara()) && isValidKegiatan(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'kategori', 'deskripsi', 'tanggal']);
+      allow delete: if (isSekretaris() || isBendahara());
+    }
+    
+    match /polling/{pollId} {
+      allow read: if true;
+      allow create: if isSekretaris() && isValidPolling(incoming());
+      allow update: if isSekretaris() && isValidPolling(incoming()) && 
+                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'deskripsi', 'tipe', 'pilihan', 'status']);
+      allow delete: if isSekretaris();
+
+      match /voters/{voterId} {
+        allow read: if true;
+        allow create: if get(/databases/$(database)/documents/polling/$(pollId)).data.status == 'aktif' &&
+                      isValidVote(incoming());
+      }
     }
   }
 }

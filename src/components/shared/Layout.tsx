@@ -15,10 +15,13 @@ import {
   Calendar, 
   ClipboardList, 
   Megaphone,
+  Package,
   LogOut,
   Menu,
   X,
-  HelpCircle
+  HelpCircle,
+  Camera,
+  Vote
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import ConnectionBanner from './ConnectionBanner';
@@ -44,6 +47,11 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'Notulensi Rapat', path: '/sekretaris/rapat', icon: ClipboardList, role: 'sekretaris' },
   { label: 'Presensi', path: '/sekretaris/presensi', icon: Calendar, role: 'sekretaris' },
   { label: 'Pengumuman', path: '/sekretaris/pengumuman', icon: Megaphone, role: 'sekretaris' },
+  // Shared
+  { label: 'Manajemen Aset', path: '/assets', icon: Package, role: 'all' },
+  { label: 'Galeri Kegiatan', path: '/galeri', icon: Camera, role: 'all' },
+  { label: 'Kalender Kegiatan', path: '/kalender', icon: Calendar, role: 'all' },
+  { label: 'E-Voting / Polling', path: '/polling', icon: Vote, role: 'all' },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {

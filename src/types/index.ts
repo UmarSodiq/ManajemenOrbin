@@ -84,6 +84,51 @@ export interface Pengumuman {
   dibuatOleh: string;
 }
 
+export interface Asset {
+  id: string;
+  namaBarang: string;
+  lokasi: string;
+  tanggalInput: Date;
+  dicatatOleh: string;
+}
+
+export interface Galeri {
+  id: string;
+  judul: string;
+  deskripsi?: string;
+  imageUrl: string;
+  tanggalKegiatan: string;
+  tanggalUpload: Date;
+  diunggahOleh: string;
+}
+
+export interface Kegiatan {
+  id: string;
+  judul: string;
+  kategori: 'Rutin' | 'Khusus' | 'Sosial' | 'Rapat';
+  deskripsi?: string;
+  tanggal: string; // YYYY-MM-DD
+  dibuatOleh: string;
+}
+
+export interface Polling {
+  id: string;
+  judul: string;
+  deskripsi?: string;
+  tipe: 'pilihan_ganda' | 'manual';
+  pilihan: string[];
+  status: 'aktif' | 'selesai';
+  createdAt: Date;
+  dibuatOleh: string;
+}
+
+export interface Vote {
+  id: string; // This will be the userId
+  pilihan: string;
+  voterName?: string;
+  timestamp: Date;
+}
+
 // Input types (without id and auto metadata)
 export type KasMasukInput = Omit<KasMasuk, 'id' | 'dicatatOleh'>;
 export type KasKeluarInput = Omit<KasKeluar, 'id' | 'dicatatOleh'>;
@@ -91,6 +136,11 @@ export type RapatInput = Omit<Rapat, 'id' | 'dibuatOleh' | 'notulensi'>;
 export type NotulensiInput = Notulensi;
 export type AnggotaInput = Omit<Anggota, 'id' | 'tanggalBergabung'>;
 export type PengumumanInput = Pick<Pengumuman, 'judul' | 'isi'>;
+export type AssetInput = Omit<Asset, 'id' | 'tanggalInput' | 'dicatatOleh'>;
+export type GaleriInput = Omit<Galeri, 'id' | 'tanggalUpload' | 'diunggahOleh'>;
+export type KegiatanInput = Omit<Kegiatan, 'id' | 'dibuatOleh'>;
+export type PollingInput = Omit<Polling, 'id' | 'createdAt' | 'dibuatOleh'>;
+export type VoteInput = Omit<Vote, 'id' | 'timestamp'>;
 
 export enum OperationType {
   CREATE = 'create',

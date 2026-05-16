@@ -198,7 +198,7 @@ export default function LaporanKeuangan() {
                   <td className="px-4 py-4 text-xs text-gray-400 font-mono font-medium">{formatDate(t.tanggal)}</td>
                   <td className="px-4 py-4">
                     <span className="font-semibold text-slate-900 text-sm block">{t.keterangan}</span>
-                    {t.isIuran && <span className="text-[9px] text-blue-500 font-bold uppercase tracking-tighter">Penerimaan Iuran Anggota</span>}
+                    {(t as any).isIuran && <span className="text-[9px] text-blue-500 font-bold uppercase tracking-tighter">Penerimaan Iuran Anggota</span>}
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-2">

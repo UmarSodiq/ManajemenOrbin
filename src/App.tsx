@@ -18,6 +18,11 @@ import PengumumanList from './components/pengumuman/PengumumanList';
 import BendaharaDashboard from './components/dashboard/BendaharaDashboard';
 import SekretarisDashboard from './components/dashboard/SekretarisDashboard';
 import GuidePage from './components/shared/GuidePage';
+import AssetManagement from './components/assets/AssetManagement';
+import GalleryPage from './components/gallery/GalleryPage';
+import EventCalendar from './components/calendar/EventCalendar';
+import PollingManager from './components/polling/PollingManager';
+import SinglePollView from './components/polling/SinglePollView';
 import { Role } from './types';
 
 // Placeholder components for routes
@@ -151,6 +156,34 @@ export default function App() {
           <ProtectedRoute>
             <GuidePage />
           </ProtectedRoute>
+        } />
+
+        <Route path="/assets" element={
+          <ProtectedRoute>
+            <AssetManagement />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/galeri" element={
+          <ProtectedRoute>
+            <GalleryPage />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/kalender" element={
+          <ProtectedRoute>
+            <EventCalendar />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/polling" element={
+          <ProtectedRoute>
+            <PollingManager />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/polling/:id" element={
+          <SinglePollView />
         } />
 
         <Route path="*" element={<Navigate replace to="/" />} />

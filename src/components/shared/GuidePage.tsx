@@ -14,7 +14,10 @@ import {
   ArrowUpCircle, 
   ArrowDownCircle,
   HelpCircle,
-  Info
+  Info,
+  Package,
+  Camera,
+  Vote
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useAuth } from '../../hooks/useAuth';
@@ -180,6 +183,71 @@ export default function GuidePage() {
             </div>
           </motion.section>
         )}
+
+        {/* Global/Shared Section (Manajemen Aset) */}
+        <motion.section variants={item} className="space-y-6">
+          <div className="flex items-center gap-3 px-4">
+            <Package className="w-6 h-6 text-amber-600" />
+            <h2 className="text-2xl font-bold text-slate-900">Manajemen Aset (Umum)</h2>
+          </div>
+          
+          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm border-l-4 border-l-amber-500">
+            <p className="text-sm text-gray-600 mb-4">
+              Fitur ini dapat diakses baik oleh Bendahara maupun Sekretaris untuk mengelola barang milik organisasi.
+            </p>
+            <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
+              <li>Input <span className="font-medium text-slate-900">Nama Barang</span> dan <span className="font-medium text-slate-900">Lokasi</span> (misal: Gudang Masjid, Rumah Ketua).</li>
+              <li>Data ini membantu saat akan mengadakan acara untuk mengetahui ketersediaan alat.</li>
+              <li>Pastikan melakukan update jika ada barang yang pindah lokasi penyimpanan.</li>
+            </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm border-l-4 border-l-indigo-500">
+            <div className="flex items-center gap-2 mb-3 font-bold text-slate-900">
+               <Camera className="w-5 h-5 text-indigo-500" />
+               Galeri Dokumentasi
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Gunakan fitur ini untuk menyimpan foto-foto setelah kegiatan selesai sebagai arsip visual.
+            </p>
+            <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
+              <li>Masukkan <span className="font-medium text-slate-900">Judul Kegiatan</span> dan <span className="font-medium text-slate-900">URL Gambar</span>.</li>
+              <li>Karena sistem tidak menyimpan file gambar secara langsung, Anda perlu mengunggah foto ke layanan hosting gambar (seperti Imgur, Google Drive, dsb) lalu menempelkan link-nya di sini.</li>
+              <li>Sertakan deskripsi singkat untuk menceritakan momen penting dalam foto tersebut.</li>
+            </ul>
+          </div>
+          
+          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm border-l-4 border-l-indigo-600">
+            <div className="flex items-center gap-2 mb-3 font-bold text-slate-900">
+               <Calendar className="w-5 h-5 text-indigo-600" />
+               Kalender Kegiatan
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Fitur ini membantu memantau jadwal organisasi, baik yang rutin maupun acara khusus.
+            </p>
+            <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
+              <li><span className="font-medium text-slate-900">Rutin Selapanan:</span> Muncul otomatis setiap 35 hari sekali (Sabtu Malam Minggu) untuk memudahkan perencanaan.</li>
+              <li><span className="font-medium text-slate-900">Agenda Khusus:</span> Klik pada tanggal di kalender untuk menambah acara satu kali (seperti Baksos, Rapat, atau Syukuran).</li>
+              <li>Membantu seluruh pengurus melihat jadwal yang bentrok sebelum memutuskan tanggal kegiatan baru.</li>
+            </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm border-l-4 border-l-indigo-600">
+            <div className="flex items-center gap-2 mb-3 font-bold text-slate-900">
+               <Vote className="w-5 h-5 text-indigo-600" />
+               E-Voting & Polling
+            </div>
+            <p className="text-sm text-gray-600 mb-4">
+              Gunakan fitur ini untuk pengambilan keputusan bersama atau pemilihan ketua secara digital.
+            </p>
+            <ul className="text-sm text-gray-600 space-y-2 list-disc pl-5">
+              <li><span className="font-medium text-slate-900">Buat Polling:</span> Sekretaris dapat membuat polling pilihan ganda atau input manual (terserah pemilih).</li>
+              <li><span className="font-medium text-slate-900">Satu Akun Satu Suara:</span> Sistem otomatis mengunci pemilihan berdasarkan akun login untuk mencegah kecurangan.</li>
+              <li><span className="font-medium text-slate-900">Bagikan Link:</span> Salin link polling tertentu untuk dibagikan ke anggota agar mereka langsung diarahkan ke halaman voting.</li>
+              <li>Hasil voting muncul secara real-time dalam bentuk grafik persentase.</li>
+            </ul>
+          </div>
+        </motion.section>
 
         {/* Support Section */}
         <motion.section variants={item} className="bg-slate-900 p-8 rounded-3xl text-white overflow-hidden relative">

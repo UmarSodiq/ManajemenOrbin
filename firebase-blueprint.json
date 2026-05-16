@@ -97,6 +97,71 @@
         "dibuatOleh": { "type": "string" }
       },
       "required": ["judul", "isi", "tanggalDibuat", "tanggalDiperbarui", "dibuatOleh"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "Organization asset/property",
+      "type": "object",
+      "properties": {
+        "namaBarang": { "type": "string" },
+        "lokasi": { "type": "string" },
+        "tanggalInput": { "type": "string", "format": "date-time" },
+        "dicatatOleh": { "type": "string" }
+      },
+      "required": ["namaBarang", "lokasi", "tanggalInput", "dicatatOleh"]
+    },
+    "Galeri": {
+      "title": "Galeri",
+      "description": "Activity documentation photos",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "deskripsi": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "tanggalKegiatan": { "type": "string", "format": "date" },
+        "tanggalUpload": { "type": "string", "format": "date-time" },
+        "diunggahOleh": { "type": "string" }
+      },
+      "required": ["judul", "imageUrl", "tanggalKegiatan", "tanggalUpload", "diunggahOleh"]
+    },
+    "Kegiatan": {
+      "title": "Kegiatan",
+      "description": "Calendar event",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "kategori": { "type": "string", "enum": ["Rutin", "Khusus", "Sosial", "Rapat"] },
+        "deskripsi": { "type": "string" },
+        "tanggal": { "type": "string", "format": "date" },
+        "dibuatOleh": { "type": "string" }
+      },
+      "required": ["judul", "kategori", "tanggal", "dibuatOleh"]
+    },
+    "Polling": {
+      "title": "Polling",
+      "description": "Electronic voting or polling",
+      "type": "object",
+      "properties": {
+        "judul": { "type": "string" },
+        "deskripsi": { "type": "string" },
+        "tipe": { "type": "string", "enum": ["pilihan_ganda", "manual"] },
+        "pilihan": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["aktif", "selesai"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "dibuatOleh": { "type": "string" }
+      },
+      "required": ["judul", "tipe", "status", "createdAt", "dibuatOleh"]
+    },
+    "Vote": {
+      "title": "Vote",
+      "description": "User vote record",
+      "type": "object",
+      "properties": {
+        "pilihan": { "type": "string" },
+        "voterName": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["pilihan", "timestamp"]
     }
   },
   "firestore": {
@@ -107,6 +172,11 @@
     "kasKeluar": { "schema": "KasKeluar", "description": "Expense records" },
     "rapat": { "schema": "Rapat", "description": "Meeting records" },
     "presensi": { "schema": "Presensi", "description": "Attendance records" },
-    "pengumuman": { "schema": "Pengumuman", "description": "Announcements" }
+    "pengumuman": { "schema": "Pengumuman", "description": "Announcements" },
+    "assets": { "schema": "Asset", "description": "Organization assets" },
+    "galeri": { "schema": "Galeri", "description": "Activity documentation" },
+    "kegiatan": { "schema": "Kegiatan", "description": "Calendar events" },
+    "polling": { "schema": "Polling", "description": "Polls and voting" },
+    "polling/{pollId}/voters": { "schema": "Vote", "description": "Votes cast in a poll" }
   }
 }
