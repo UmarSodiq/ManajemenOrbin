@@ -1,13 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-brand-primary: #1e293b;
+  --color-brand-accent: #2563eb;
+  --color-brand-surface: #f8fafc;
 }
 
-body {
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  :root {
+    color-scheme: light;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --border-base: #e2e8f0;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-base: #334155;
+  }
+
+  body {
+    @apply font-sans bg-[var(--bg-main)] text-[var(--text-primary)] transition-colors duration-200;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-sm active:scale-95 flex items-center justify-center gap-2;
+  }
+  
+  .card-base {
+    @apply bg-[var(--bg-card)] rounded-2xl border border-[var(--border-base)] shadow-sm hover:shadow-md transition-all;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5;
+  }
+  
+  .nav-item-active {
+    @apply bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/20;
+  }
 }

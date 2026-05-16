@@ -32,103 +32,105 @@ export default function BendaharaDashboard() {
   ].sort((a, b) => b.tanggal.getTime() - a.tanggal.getTime()).slice(0, 5);
 
   const stats = [
-    { label: 'Total Saldo Kas', value: formatCurrency(saldoKas), icon: Wallet, color: 'text-slate-900', bg: 'bg-white' },
+    { label: 'Total Saldo Kas', value: saldoKas, icon: Wallet, color: 'text-[var(--text-primary)]', bg: 'bg-white', isCurrency: true },
     { label: 'Belum Bayar Iuran', value: `${belumBayarCount} Orang`, icon: Users, color: 'text-blue-600', bg: 'bg-white' },
-    { label: 'Anggota Aktif', value: `${anggotaAktif.length} Jiwa`, icon: Users, color: 'text-slate-600', bg: 'bg-white' },
+    { label: 'Anggota Aktif', value: `${anggotaAktif.length} Jiwa`, icon: Users, color: 'text-[var(--text-secondary)]', bg: 'bg-white' },
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-8 bg-gray-50 min-h-full">
-      <div className="flex justify-between items-center">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Selamat Datang, Bendahara</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">Status keuangan organisasi hari ini.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">Dasbor Bendahara</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">Ringkasan aktivitas keuangan organisasi Anda.</p>
         </div>
-      </div>
+        
+        <div className="flex items-center gap-3">
+          <div className="text-right hidden sm:block">
+            <p className="text-[11px] font-semibold text-[var(--text-muted)] font-mono">SINKRONISASI AKTIF</p>
+            <p className="text-xs font-bold text-green-600 dark:text-green-500">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          </div>
+        </div>
+      </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat, i) => (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             key={stat.label}
-            className={cn("p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm bg-white")}
+            className="p-6 card-base relative group"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2.5 bg-slate-50 rounded-xl">
-                <stat.icon className="w-5 h-5 text-slate-600" />
-              </div>
+            <div className={cn(
+              "w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors",
+              stat.color.includes('blue') ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400" : stat.color.includes('red') ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400" : "bg-slate-50 dark:bg-white/5 text-[var(--text-secondary)]"
+            )}>
+              <stat.icon className="w-6 h-6" />
             </div>
-            <p className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-            <p className={cn("text-xl sm:text-2xl font-semibold tracking-tight", stat.color)}>{stat.value}</p>
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">{stat.label}</p>
+            <p className={cn("text-2xl font-bold tracking-tight", stat.color)}>
+              {stat.isCurrency ? formatCurrency(stat.value as number) : stat.value}
+            </p>
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">Transaksi Terbaru</h2>
-            <Link to="/bendahara/laporan" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1">
-              Semua Laporan <ChevronRight className="w-3 h-3" />
-            </Link>
-          </div>
-          <div className="flex-1 divide-y divide-gray-50">
-            {latestTransactions.length === 0 ? (
-              <div className="p-12 text-center text-gray-300 italic">Belum ada transaksi tercatat.</div>
-            ) : latestTransactions.map(t => (
-              <div key={t.id} className="p-5 flex justify-between items-center hover:bg-slate-50/50 transition-colors">
-                <div className="flex items-center gap-4">
-                   <div className={cn(
-                     "w-10 h-10 rounded-xl flex items-center justify-center",
-                     t.type === 'masuk' ? "bg-blue-50 text-blue-600" : "bg-red-50 text-red-600"
-                   )}>
-                     {t.type === 'masuk' ? <ArrowUpCircle className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
-                   </div>
-                   <div>
-                     <p className="font-semibold text-sm text-slate-900">{t.keterangan}</p>
-                     <p className="text-[10px] text-gray-400 font-mono mt-0.5">{formatDate(t.tanggal)}</p>
-                   </div>
-                </div>
-                <p className={cn(
-                  "font-bold text-sm font-mono",
-                  t.type === 'masuk' ? "text-blue-600" : "text-red-600"
-                )}>
-                  {t.type === 'masuk' ? '+' : '-'} {formatCurrency(t.jumlah)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-          <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wider">Pengumuman</h2>
-            <Link to="/sekretaris/pengumuman" className="text-xs font-medium text-blue-600 hover:underline flex items-center gap-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card-base flex flex-col">
+          <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
+            <h2 className="font-bold text-[var(--text-primary)]">Transaksi Terakhir</h2>
+            <Link to="/bendahara/laporan" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1 transition-colors">
               Lihat Semua <ChevronRight className="w-3 h-3" />
             </Link>
           </div>
-          <div className="flex-1 p-6 space-y-5">
-            {pengumumanList.length === 0 ? (
-              <div className="text-center text-gray-300 italic py-10">Belum ada pengumuman.</div>
-            ) : pengumumanList.slice(0, 4).map(p => (
-              <Link key={p.id} to="/sekretaris/pengumuman" className="block group">
-                <div className="flex gap-3">
-                  <div className="w-1 bg-gray-100 group-hover:bg-blue-600 rounded-full transition-all" />
-                  <div>
-                    <h3 className="font-semibold text-sm text-slate-800 group-hover:text-blue-600 transition-colors line-clamp-1">{p.judul}</h3>
-                    <p className="text-[10px] font-mono text-gray-400 mt-1 uppercase tracking-widest">{formatDate(p.tanggalDibuat)}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
+          <div className="divide-y divide-slate-50 dark:divide-white/5 overflow-y-auto max-h-[400px]">
+             {latestTransactions.length === 0 ? (
+               <div className="p-12 text-center text-slate-400 italic text-sm">Tidak ada transaksi baru.</div>
+             ) : latestTransactions.map(t => (
+               <div key={t.id} className="p-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                 <div className="flex items-center gap-3">
+                    <div className={cn(
+                      "w-10 h-10 rounded-lg flex items-center justify-center",
+                      t.type === 'masuk' ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600" : "bg-red-50 dark:bg-red-900/20 text-red-600"
+                    )}>
+                      {t.type === 'masuk' ? <ArrowUpCircle className="w-5 h-5" /> : <ArrowDownRight className="w-5 h-5" />}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm text-[var(--text-primary)]">{t.keterangan}</p>
+                      <p className="text-[11px] text-[var(--text-muted)]">{formatDate(t.tanggal)}</p>
+                    </div>
+                 </div>
+                 <p className={cn("font-bold text-sm", t.type === 'masuk' ? "text-blue-600" : "text-red-500")}>
+                   {t.type === 'masuk' ? '+' : '-'} {formatCurrency(t.jumlah)}
+                 </p>
+               </div>
+             ))}
           </div>
-          <div className="p-4 mt-auto">
-            <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-               <p className="text-xs text-blue-600 font-bold mb-1">Status Keuangan</p>
-               <p className="text-[10px] text-blue-400">Verifikasi saldo terakhir dilakukan hari ini oleh sistem.</p>
-            </div>
+        </div>
+
+        <div className="card-base flex flex-col">
+          <div className="p-6 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
+            <h2 className="font-bold text-[var(--text-primary)]">Pengumuman Terbaru</h2>
+            <Link to="/sekretaris/pengumuman" className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1">
+               Lihat Semua <ChevronRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="p-4 space-y-3">
+             {pengumumanList.length === 0 ? (
+               <div className="p-12 text-center text-[var(--text-muted)] italic text-sm">Belum ada pengumuman.</div>
+             ) : pengumumanList.slice(0, 4).map(p => (
+               <Link key={p.id} to="/sekretaris/pengumuman" className="block p-4 bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-xl hover:border-blue-200 dark:hover:border-blue-900/50 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all group">
+                 <h3 className="font-bold text-sm text-[var(--text-primary)] group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">{p.judul}</h3>
+                 <p className="text-[11px] text-[var(--text-muted)] mt-1">{formatDate(p.tanggalDibuat)}</p>
+               </Link>
+             ))}
+          </div>
+          <div className="mt-auto p-4 border-t border-[var(--border-base)] bg-[var(--bg-main)]/50">
+             <div className="flex items-center gap-3 text-[var(--text-muted)] text-xs p-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <p>Status: Sistem Keuangan Terpusat</p>
+             </div>
           </div>
         </div>
       </div>

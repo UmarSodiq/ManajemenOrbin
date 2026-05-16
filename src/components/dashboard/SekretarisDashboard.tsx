@@ -37,11 +37,18 @@ export default function SekretarisDashboard() {
   ];
 
   return (
-    <div className="p-8 space-y-8 bg-gray-50 min-h-full">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Halo, Sekretaris</h1>
-        <p className="text-sm text-gray-500 mt-1">Status manajemen organisasi hari ini.</p>
-      </div>
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">Dasbor Sekretaris</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">Kelola administrasi dan agenda organisasi.</p>
+        </div>
+        
+        <div className="bg-[var(--bg-card)] px-4 py-2 rounded-xl border border-[var(--border-base)] shadow-sm flex items-center gap-3">
+          <Clock className="w-4 h-4 text-[var(--text-muted)]" />
+          <span className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider">{new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB</span>
+        </div>
+      </header>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, i) => (
@@ -50,93 +57,102 @@ export default function SekretarisDashboard() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             key={stat.label}
-            className={cn("p-6 rounded-2xl border border-gray-200 shadow-sm bg-white")}
+            className="p-6 card-base"
           >
-            <div className="p-2.5 bg-slate-50 rounded-xl w-fit mb-4">
-              <stat.icon className="w-5 h-5 text-slate-600" />
+            <div className="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4">
+              <stat.icon className="w-5 h-5" />
             </div>
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
-            <p className="text-2xl font-semibold text-slate-900 tracking-tight">{stat.value}</p>
+            <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">{stat.label}</p>
+            <p className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">{stat.value}</p>
           </motion.div>
         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Jadwal Rapat */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-2xl p-8 flex flex-col justify-between shadow-sm min-h-[350px]">
+        <div className="lg:col-span-2 card-base p-8 flex flex-col justify-between">
            <div>
-             <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-8">Jadwal Rapat Mendatang</h2>
+             <div className="flex items-center justify-between mb-8">
+               <h2 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+                 <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" /> Agenda Rapat Terdekat
+               </h2>
+             </div>
+             
              {upcomingRapat ? (
-               <div className="space-y-8">
-                 <h3 className="text-3xl font-semibold leading-tight tracking-tight text-slate-900">{upcomingRapat.judul}</h3>
-                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="flex items-center gap-3 text-gray-500 bg-slate-50 p-4 rounded-xl">
-                      <Calendar className="w-5 h-5 text-blue-600" />
-                      <span className="font-semibold text-sm">{formatDate(upcomingRapat.tanggal)}</span>
+               <div className="space-y-6">
+                 <h3 className="text-2xl font-bold text-[var(--text-primary)]">{upcomingRapat.judul}</h3>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                      <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase mb-1">Tanggal</p>
+                      <p className="font-bold text-sm text-[var(--text-secondary)]">{formatDate(upcomingRapat.tanggal)}</p>
                     </div>
-                    <div className="flex items-center gap-3 text-gray-500 bg-slate-50 p-4 rounded-xl">
-                      <Clock className="w-5 h-5 text-blue-600" />
-                      <span className="font-mono text-sm">{upcomingRapat.waktuMulai} - {upcomingRapat.waktuSelesai}</span>
+                    <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                      <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase mb-1">Waktu</p>
+                      <p className="font-bold text-sm text-[var(--text-secondary)]">{upcomingRapat.waktuMulai} - {upcomingRapat.waktuSelesai}</p>
                     </div>
-                    <div className="flex items-center gap-3 text-gray-500 bg-slate-50 p-4 rounded-xl">
-                      <MapPin className="w-5 h-5 text-blue-600" />
-                      <span className="text-sm font-medium">{upcomingRapat.tempat}</span>
+                    <div className="p-4 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5 truncate">
+                      <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase mb-1">Tempat</p>
+                      <p className="font-bold text-sm text-[var(--text-secondary)] uppercase">{upcomingRapat.tempat}</p>
                     </div>
                  </div>
                </div>
              ) : (
-               <div className="py-12 text-center text-gray-300 italic border border-dashed border-gray-200 rounded-2xl">Belum ada rapat terjadwal dalam waktu dekat.</div>
+               <div className="py-12 text-center text-slate-400 italic text-sm border border-dashed border-slate-200 rounded-xl">Tidak ada agenda rapat dalam waktu dekat.</div>
              )}
            </div>
+           
            {upcomingRapat && (
-             <Link to="/sekretaris/rapat" className="mt-10 self-start px-6 py-2.5 bg-slate-900 text-white rounded-lg font-semibold text-sm tracking-tight hover:bg-slate-800 transition-colors shadow-sm">
-               Kelola Rapat
+             <Link to="/sekretaris/rapat" className="mt-8 btn-primary self-start">
+               Manajer Rapat
+               <ChevronRight className="w-4 h-4" />
              </Link>
            )}
         </div>
 
-        {/* Ringkasan & Pengumuman */}
         <div className="space-y-6">
-           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-             <div className="flex justify-between items-center mb-6">
-               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-widest">Presensi Terakhir</h2>
-               {lastRapat && <span className="text-[10px] font-mono text-gray-400 font-bold">{formatDate(lastRapat.tanggal)}</span>}
-             </div>
+           <div className="card-base p-6">
+             <h2 className="font-bold text-[var(--text-primary)] mb-6 flex items-center gap-2">
+               <CheckCircle2 className="w-4 h-4 text-green-500" /> Presensi Rapat Terakhir
+             </h2>
              {lastRapat ? (
-               <div className="flex items-center gap-6">
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-slate-900">{hadirCount}</p>
-                    <p className="text-[10px] font-bold uppercase text-gray-400 tracking-wider">Hadir</p>
-                  </div>
-                  <div className="flex-1">
-                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden flex">
-                       <motion.div 
+                <div className="space-y-4">
+                   <div className="flex items-center gap-4">
+                     <div className="w-12 h-12 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xl font-bold">
+                       {hadirCount}
+                     </div>
+                     <div>
+                       <p className="text-sm font-bold text-[var(--text-primary)] uppercase">Hadir</p>
+                       <p className="text-xs text-[var(--text-secondary)]">Dari {anggotaAktif.length} Anggota Aktif</p>
+                     </div>
+                   </div>
+                   <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${(hadirCount / anggotaAktif.length) * 100}%` }}
                         className="bg-blue-600 h-full rounded-full"
-                       />
-                    </div>
-                    <p className="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-tighter">{(hadirCount / anggotaAktif.length * 100).toFixed(0)}% Partisipasi</p>
-                  </div>
-               </div>
+                      />
+                   </div>
+                   <p className="text-[10px] text-right font-bold text-slate-400 uppercase tracking-widest">Tingkat Partisipasi: {(hadirCount / anggotaAktif.length * 100).toFixed(0)}%</p>
+                </div>
              ) : (
-               <div className="text-center py-6 text-gray-300 italic">Belum ada data.</div>
+                <div className="text-center py-6 text-slate-400 italic text-sm">Belum ada data presensi.</div>
              )}
            </div>
 
-           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm flex flex-col">
+           <div className="card-base p-6">
              <div className="flex justify-between items-center mb-6">
-               <h2 className="text-xs font-bold text-slate-900 uppercase tracking-widest">Warta Organisasi</h2>
-               <Link to="/sekretaris/pengumuman" className="p-1 hover:bg-slate-50 rounded-lg transition-colors"><ChevronRight className="w-5 h-5 text-gray-400" /></Link>
+                <h2 className="font-bold text-[var(--text-primary)] flex items-center gap-2">
+                  <Megaphone className="w-4 h-4 text-[var(--text-muted)]" /> Pengumuman
+                </h2>
+                <Link to="/sekretaris/pengumuman" className="p-1.5 hover:bg-[var(--bg-main)] rounded-lg transition-colors border border-transparent hover:border-[var(--border-base)]"><ChevronRight className="w-4 h-4 text-[var(--text-muted)]" /></Link>
              </div>
              <div className="space-y-3">
-               {pengumumanList.slice(0, 3).map(p => (
-                 <Link key={p.id} to="/sekretaris/pengumuman" className="block p-3.5 bg-slate-50 rounded-xl border border-transparent hover:border-gray-200 transition-all group">
-                    <h4 className="font-semibold text-xs text-slate-900 line-clamp-1 group-hover:text-blue-600 transition-colors">{p.judul}</h4>
-                    <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">{formatDate(p.tanggalDibuat)}</p>
-                 </Link>
-               ))}
-               {pengumumanList.length === 0 && <p className="text-center text-gray-300 italic py-4 text-xs">Kosong.</p>}
+                {pengumumanList.slice(0, 3).map(p => (
+                  <Link key={p.id} to="/sekretaris/pengumuman" className="block p-3 bg-slate-50 dark:bg-white/5 hover:bg-blue-50 dark:hover:bg-blue-900/10 border border-slate-100 dark:border-white/5 hover:border-blue-200 rounded-xl transition-all group">
+                     <h4 className="font-bold text-xs text-[var(--text-primary)] line-clamp-1 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">{p.judul}</h4>
+                     <p className="text-[10px] text-[var(--text-muted)] mt-1">{formatDate(p.tanggalDibuat)}</p>
+                  </Link>
+                ))}
+                {pengumumanList.length === 0 && <p className="text-center text-slate-400 italic text-xs py-4">Kotak masuk kosong.</p>}
              </div>
            </div>
         </div>
