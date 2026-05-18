@@ -135,7 +135,7 @@ export default function LudoRace({ onBack }: { onBack: () => void }) {
   }
 
   if (room?.status === 'waiting') {
-    const playerCount = Object.keys(room.players).length;
+    const playerCount = Object.keys(room.players || {}).length;
     const maxPlayers = room.maxPlayers || 2;
     return (
       <div className="flex flex-col h-full bg-slate-900 items-center justify-center text-white">
@@ -143,6 +143,15 @@ export default function LudoRace({ onBack }: { onBack: () => void }) {
         <h2 className="text-xl font-black uppercase italic">Menunggu Pemain... ({playerCount}/{maxPlayers})</h2>
         <p className="text-slate-500 text-[10px] mt-2 uppercase font-black tracking-widest text-center px-6">Permainan {maxPlayers}P akan dimulai segera setelah kuota penuh</p>
         <button onClick={() => setLocalRoomId(null)} className="mt-8 text-slate-500 font-bold uppercase text-[10px]">Batalkan</button>
+      </div>
+    );
+  }
+
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-900 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-emerald-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest text-center">Memuat Balapan...</p>
       </div>
     );
   }

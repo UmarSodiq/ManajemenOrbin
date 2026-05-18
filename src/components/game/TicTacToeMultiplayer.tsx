@@ -122,9 +122,18 @@ export default function TicTacToeMultiplayer({ onBack }: { onBack: () => void })
     );
   }
 
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-900 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-indigo-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest text-center">Menghubungkan ke Arena...</p>
+      </div>
+    );
+  }
+
   const isMyTurn = room?.turn === user?.uid;
-  const board = room?.gameState.board || Array(9).fill(null);
-  const mySymbol = room?.players.p1.uid === user?.uid ? 'X' : 'O';
+  const board = room?.gameState?.board || Array(9).fill(null);
+  const mySymbol = room?.players?.p1?.uid === user?.uid ? 'X' : 'O';
 
   return (
     <div className="flex flex-col h-full bg-slate-900 font-sans text-white overflow-hidden relative">

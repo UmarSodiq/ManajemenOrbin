@@ -33,10 +33,10 @@ import OrbinSnake from './OrbinSnake';
 import OrbinBreaker from './OrbinBreaker';
 import ConnectFourMultiplayer from './ConnectFour';
 import CardDuel from './CardDuel';
-import LudoRace from './LudoRace';
+import LudoClassic from './LudoClassic';
 import WordBattle from './WordBattle';
 
-type GameType = 'orbit' | 'jump' | 'dash' | 'tapping' | 'tictactoe' | 'snake' | 'breaker' | 'connect4' | 'card_duel' | 'ludo_race' | 'word_battle' | null;
+type GameType = 'orbit' | 'jump' | 'dash' | 'tapping' | 'tictactoe' | 'snake' | 'breaker' | 'connect4' | 'card_duel' | 'ludo_classic' | 'word_battle' | null;
 
 export default function OrbinGame() {
   const { user } = useAuth();
@@ -133,9 +133,9 @@ export default function OrbinGame() {
       type: 'Multiplayer'
     },
     {
-      id: 'ludo_race',
-      title: 'Ludo Race',
-      description: 'Balapan dadu 1v1 secara online.',
+      id: 'ludo_classic',
+      title: 'Ludo Classic',
+      description: 'Papan Ludo klasik real-time (2-4P).',
       icon: Disc,
       color: 'from-emerald-600 to-teal-800',
       tag: 'Race',
@@ -216,8 +216,8 @@ export default function OrbinGame() {
     return <CardDuel onBack={() => setActiveGame(null)} />;
   }
 
-  if (activeGame === 'ludo_race') {
-    return <LudoRace onBack={() => setActiveGame(null)} />;
+  if (activeGame === 'ludo_classic') {
+    return <LudoClassic onBack={() => setActiveGame(null)} />;
   }
 
   if (activeGame === 'word_battle') {

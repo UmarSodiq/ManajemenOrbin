@@ -177,9 +177,18 @@ export default function CardDuel({ onBack }: { onBack: () => void }) {
     );
   }
 
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-950 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest text-center">Memuat Kartu...</p>
+      </div>
+    );
+  }
+
   const myId = user?.uid || '';
   const myHand = room?.gameState?.hands?.[myId] || [];
-  const oppId = room?.players.p1.uid === myId ? room?.players.p2?.uid : room?.players.p1.uid;
+  const oppId = room?.players?.p1?.uid === myId ? room?.players?.p2?.uid : room?.players?.p1?.uid;
   const oppHandCount = room?.gameState?.hands?.[oppId || '']?.length || 0;
   const topCard = room?.gameState?.discardPile?.[room.gameState.discardPile.length - 1];
   const isMyTurn = room?.turn === myId;

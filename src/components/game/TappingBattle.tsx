@@ -120,7 +120,16 @@ export default function TappingBattle({ onBack }: { onBack: () => void }) {
     );
   }
 
-  const isP1 = room?.players.p1.uid === user?.uid;
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-950 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-yellow-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest text-center">Menyiapkan Arena...</p>
+      </div>
+    );
+  }
+
+  const isP1 = room?.players?.p1?.uid === user?.uid;
   const myTaps = isP1 ? room?.gameState.p1Taps : room?.gameState.p2Taps;
   const oppTaps = isP1 ? room?.gameState.p2Taps : room?.gameState.p1Taps;
 

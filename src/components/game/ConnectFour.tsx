@@ -129,6 +129,15 @@ export default function ConnectFourMultiplayer({ onBack }: { onBack: () => void 
     );
   }
 
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-950 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-blue-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">Memuat Papan...</p>
+      </div>
+    );
+  }
+
   const isMyTurn = room?.turn === user?.uid;
   const board = room?.gameState.board || Array(42).fill(null);
 

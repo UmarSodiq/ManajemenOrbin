@@ -107,7 +107,16 @@ export default function WordBattle({ onBack }: { onBack: () => void }) {
     );
   }
 
-  const isP1 = room?.players.p1.uid === user?.uid;
+  if (!room) {
+    return (
+      <div className="flex flex-col h-full bg-slate-950 items-center justify-center p-6 text-white text-center">
+        <RefreshCw className="w-10 h-10 text-pink-500 animate-spin mb-4" />
+        <p className="text-slate-500 font-black uppercase text-[10px] tracking-widest">Memuat Kamus...</p>
+      </div>
+    );
+  }
+
+  const isP1 = room?.players?.p1?.uid === user?.uid;
   const myScore = isP1 ? room?.gameState.p1Score : room?.gameState.p2Score;
   const oppScore = isP1 ? room?.gameState.p2Score : room?.gameState.p1Score;
 
