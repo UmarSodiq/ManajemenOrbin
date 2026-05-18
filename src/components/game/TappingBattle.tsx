@@ -58,7 +58,7 @@ export default function TappingBattle({ onBack }: { onBack: () => void }) {
     const available = await findAvailableRoom();
     if (available) {
       const startTime = Date.now();
-      await joinRoom(available.id, user.uid, user.username || 'Guest');
+      await joinRoom(available.id, user.uid, user.username || 'Guest', available.players);
       await updateGameState(available.id, {
           p1Taps: 0,
           p2Taps: 0,

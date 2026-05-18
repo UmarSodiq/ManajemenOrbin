@@ -189,7 +189,9 @@
           "type": "object",
           "properties": {
             "p1": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } },
-            "p2": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } }
+            "p2": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } },
+            "p3": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } },
+            "p4": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } }
           }
         },
         "gameState": { "type": "object" },

@@ -31,8 +31,8 @@ export default function OrbinJump({ onGameOver, highScore, onBack }: OrbinJumpPr
     height: 30,
     vy: 0,
     vx: 0,
-    jumpStrength: -12,
-    gravity: 0.4
+    jumpStrength: -10,
+    gravity: 0.35
   });
 
   const platformsRef = useRef<Platform[]>([]);
@@ -76,8 +76,8 @@ export default function OrbinJump({ onGameOver, highScore, onBack }: OrbinJumpPr
       height: 30,
       vy: 0,
       vx: 0,
-      jumpStrength: -12,
-      gravity: 0.4
+      jumpStrength: -10,
+      gravity: 0.35
     };
     
     setGameState('playing');
@@ -189,7 +189,7 @@ export default function OrbinJump({ onGameOver, highScore, onBack }: OrbinJumpPr
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect) {
       const relX = e.clientX - rect.left;
-      playerRef.current.vx = (relX - playerRef.current.x - playerRef.current.width/2) * 0.1;
+      playerRef.current.vx = (relX - playerRef.current.x - playerRef.current.width/2) * 0.08;
     }
   };
 
@@ -198,7 +198,7 @@ export default function OrbinJump({ onGameOver, highScore, onBack }: OrbinJumpPr
     const rect = canvasRef.current?.getBoundingClientRect();
     if (rect && e.touches[0]) {
       const relX = e.touches[0].clientX - rect.left;
-      playerRef.current.vx = (relX - playerRef.current.x - playerRef.current.width/2) * 0.1;
+      playerRef.current.vx = (relX - playerRef.current.x - playerRef.current.width/2) * 0.08;
     }
   };
 

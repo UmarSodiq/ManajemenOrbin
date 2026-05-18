@@ -22,18 +22,21 @@ export interface GameRoom {
   players: {
     p1: { uid: string; name: string };
     p2?: { uid: string; name: string };
+    p3?: { uid: string; name: string };
+    p4?: { uid: string; name: string };
   };
   gameState: any;
   turn: string;
   winner: string | null;
   updatedAt: any;
+  maxPlayers: number;
 }
 
 export function useMultiplayerGame(gameType: string) {
   const [room, setRoom] = useState<GameRoom | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const createRoom = async (userId: string, userName: string, initialGameState: any) => {
+  const createRoom = async (userId: string, userName: string, initialGameState: any, maxPlayers: number = 2) => {
     setIsLoading(true);
     try {
       const newRoomRef = doc(collection(db, 'gameRooms'));
@@ -46,7 +49,8 @@ export function useMultiplayerGame(gameType: string) {
         gameState: initialGameState,
         turn: userId,
         winner: null,
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
+        maxPlayers
       };
       await setDoc(newRoomRef, roomData);
       setIsLoading(false);
@@ -58,15 +62,23 @@ export function useMultiplayerGame(gameType: string) {
     }
   };
 
-  const joinRoom = async (roomId: string, userId: string, userName: string) => {
+  const joinRoom = async (roomId: string, userId: string, userName: string, currentPlayers: any, maxPlayers: number = 2) => {
     setIsLoading(true);
     try {
       const roomRef = doc(db, 'gameRooms', roomId);
-      await updateDoc(roomRef, {
-        status: 'playing',
-        'players.p2': { uid: userId, name: userName },
+      const playerCount = Object.keys(currentPlayers).length;
+      const nextSlot = `p${playerCount + 1}`;
+      
+      const updates: any = {
+        [`players.${nextSlot}`]: { uid: userId, name: userName },
         updatedAt: serverTimestamp()
-      });
+      };
+
+      if (playerCount + 1 === maxPlayers) {
+        updates.status = 'playing';
+      }
+
+      await updateDoc(roomRef, updates);
       setIsLoading(false);
       return true;
     } catch (error) {
@@ -100,12 +112,13 @@ export function useMultiplayerGame(gameType: string) {
      // In a real app we'd handle disconnects
   };
 
-  const findAvailableRoom = async () => {
+  const findAvailableRoom = async (maxPlayersReq: number = 2) => {
     try {
       const q = query(
         collection(db, 'gameRooms'),
         where('gameType', '==', gameType),
         where('status', '==', 'waiting'),
+        where('maxPlayers', '==', maxPlayersReq),
         limit(1)
       );
       const snapshot = await getDocs(q);

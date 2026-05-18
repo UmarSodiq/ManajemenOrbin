@@ -291,10 +291,15 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow create: if isSignedIn() && isValidGameRoom(incoming());
       allow update: if isSignedIn() && (
-        (incoming().players.p1.uid == request.auth.uid || incoming().players.p2.uid == request.auth.uid) &&
+        (
+          incoming().players.p1.uid == request.auth.uid || 
+          incoming().players.p2.uid == request.auth.uid ||
+          (incoming().players.keys().contains('p3') && incoming().players.p3.uid == request.auth.uid) ||
+          (incoming().players.keys().contains('p4') && incoming().players.p4.uid == request.auth.uid)
+        ) &&
         isValidGameRoom(incoming())
       );
-      allow delete: if false; // Should move to finished status instead
+      allow delete: if false;
     }
   }
 }

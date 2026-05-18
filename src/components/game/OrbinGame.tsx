@@ -13,10 +13,14 @@ import {
   X,
   Zap,
   Rocket,
+  Layers,
   ChevronLeft,
   Target,
   Shield,
-  LayoutGrid
+  LayoutGrid,
+  Disc,
+  Dice6,
+  Keyboard
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useGameScores } from '../../hooks/useGameScores';
@@ -28,8 +32,11 @@ import TicTacToeMultiplayer from './TicTacToeMultiplayer';
 import OrbinSnake from './OrbinSnake';
 import OrbinBreaker from './OrbinBreaker';
 import ConnectFourMultiplayer from './ConnectFour';
+import CardDuel from './CardDuel';
+import LudoRace from './LudoRace';
+import WordBattle from './WordBattle';
 
-type GameType = 'orbit' | 'jump' | 'dash' | 'tapping' | 'tictactoe' | 'snake' | 'breaker' | 'connect4' | null;
+type GameType = 'orbit' | 'jump' | 'dash' | 'tapping' | 'tictactoe' | 'snake' | 'breaker' | 'connect4' | 'card_duel' | 'ludo_race' | 'word_battle' | null;
 
 export default function OrbinGame() {
   const { user } = useAuth();
@@ -115,6 +122,33 @@ export default function OrbinGame() {
       color: 'from-blue-700 to-blue-900',
       tag: 'Pro',
       type: 'Multiplayer'
+    },
+    {
+      id: 'card_duel',
+      title: 'Card Duel',
+      description: 'Adu kartu ala Uno secara online 1v1.',
+      icon: Layers,
+      color: 'from-orange-500 to-red-600',
+      tag: 'New',
+      type: 'Multiplayer'
+    },
+    {
+      id: 'ludo_race',
+      title: 'Ludo Race',
+      description: 'Balapan dadu 1v1 secara online.',
+      icon: Disc,
+      color: 'from-emerald-600 to-teal-800',
+      tag: 'Race',
+      type: 'Multiplayer'
+    },
+    {
+      id: 'word_battle',
+      title: 'Word Battle',
+      description: 'Siapa paling cepat mengetik kata!',
+      icon: Keyboard,
+      color: 'from-pink-600 to-fuchsia-800',
+      tag: 'Smart',
+      type: 'Multiplayer'
     }
   ];
 
@@ -176,6 +210,18 @@ export default function OrbinGame() {
 
   if (activeGame === 'connect4') {
     return <ConnectFourMultiplayer onBack={() => setActiveGame(null)} />;
+  }
+
+  if (activeGame === 'card_duel') {
+    return <CardDuel onBack={() => setActiveGame(null)} />;
+  }
+
+  if (activeGame === 'ludo_race') {
+    return <LudoRace onBack={() => setActiveGame(null)} />;
+  }
+
+  if (activeGame === 'word_battle') {
+    return <WordBattle onBack={() => setActiveGame(null)} />;
   }
 
   return (

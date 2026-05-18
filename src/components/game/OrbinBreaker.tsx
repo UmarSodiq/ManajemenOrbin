@@ -16,8 +16,8 @@ export default function OrbinBreaker({ onBack }: { onBack: () => void }) {
   const [score, setScore] = useState(0);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  const paddleRef = useRef({ x: 0, width: 80, height: 10 });
-  const ballRef = useRef({ x: 0, y: 0, vx: 4, vy: -4, radius: 6 });
+  const paddleRef = useRef({ x: 0, width: 100, height: 10 });
+  const ballRef = useRef({ x: 0, y: 0, vx: 3, vy: -3, radius: 6 });
   const bricksRef = useRef<Brick[]>([]);
   const frameRef = useRef<number>(0);
 
@@ -37,8 +37,8 @@ export default function OrbinBreaker({ onBack }: { onBack: () => void }) {
     const w = dimensions.width;
     const h = dimensions.height;
     
-    paddleRef.current.x = w / 2 - 40;
-    ballRef.current = { x: w / 2, y: h - 50, vx: 4, vy: -4, radius: 7 };
+    paddleRef.current.x = w / 2 - 50;
+    ballRef.current = { x: w / 2, y: h - 50, vx: 3, vy: -3, radius: 7 };
     
     bricksRef.current = [];
     const rows = 5;
@@ -77,7 +77,7 @@ export default function OrbinBreaker({ onBack }: { onBack: () => void }) {
       b.vy = -Math.abs(b.vy);
       // Add angle based on hit position
       const hitPos = (b.x - (p.x + p.width / 2)) / (p.width / 2);
-      b.vx = hitPos * 6;
+      b.vx = hitPos * 4;
     }
 
     // Brick collision

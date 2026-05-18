@@ -29,7 +29,7 @@ export default function ConnectFourMultiplayer({ onBack }: { onBack: () => void 
     if (!user) return;
     const available = await findAvailableRoom();
     if (available) {
-      await joinRoom(available.id, user.uid, user.username || 'Guest');
+      await joinRoom(available.id, user.uid, user.username || 'Guest', available.players);
       setLocalRoomId(available.id);
     } else {
       const id = await createRoom(user.uid, user.username || 'Guest', {
