@@ -26,6 +26,7 @@ import GalleryPage from './components/gallery/GalleryPage';
 import EventCalendar from './components/calendar/EventCalendar';
 import PollingManager from './components/polling/PollingManager';
 import SinglePollView from './components/polling/SinglePollView';
+import OrbinGame from './components/game/OrbinGame';
 import { Role } from './types';
 
 // Placeholder components for routes
@@ -219,6 +220,12 @@ export default function App() {
         <Route path="/polling/:id" element={
           <ProtectedRoute requiredRoles={['sekretaris', 'anggota']}>
             <SinglePollView />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/game" element={
+          <ProtectedRoute>
+            <OrbinGame />
           </ProtectedRoute>
         } />
 

@@ -37,6 +37,7 @@ export const translations: Record<Language, Record<string, string>> = {
     gallery: 'Galeri Kegiatan',
     calendar: 'Kalender Kegiatan',
     polling: 'E-Voting / Polling',
+    game: 'Orbin Fun Zone',
     guide: 'Petunjuk Penggunaan',
     logout: 'Keluar Sesi',
     nav_main: 'Navigasi Utama',

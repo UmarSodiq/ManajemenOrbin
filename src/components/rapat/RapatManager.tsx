@@ -9,8 +9,9 @@ import { useRapat } from '../../hooks/useRapat';
 import { useAnggota } from '../../hooks/useAnggota';
 import { useAuth } from '../../hooks/useAuth';
 import { Rapat, RapatInput, NotulensiInput } from '../../types';
-import { cn, formatDate } from '../../lib/utils';
+import { cn, formatDate, formatRapatDate } from '../../lib/utils';
 import { validateRequiredFields } from '../../utils/validation';
+import OrbinLogo from '../shared/OrbinLogo';
 import { motion, AnimatePresence } from 'motion/react';
 import { toPng } from 'html-to-image';
 
@@ -136,7 +137,10 @@ export default function RapatManager() {
             </div>
             <div className="text-right">
               <h2 className="text-xl font-bold tracking-tight uppercase">NOTULENSI RAPAT</h2>
-              <p className="text-xs font-mono font-bold text-slate-400 mt-1">{formatDate(selectedRapat?.tanggal || new Date())}</p>
+              <div className="flex items-center justify-end gap-2 text-slate-400 mt-1">
+                <Calendar className="w-4 h-4" />
+                <p className="text-xs font-mono font-bold">{formatRapatDate(selectedRapat?.tanggal || new Date())}</p>
+              </div>
             </div>
           </div>
 
@@ -197,7 +201,13 @@ export default function RapatManager() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 sm:mb-8">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Agenda Rapat</h1>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">Daftar jadwal rapat dan notulensi resmi organisasi.</p>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md border border-blue-100 dark:border-blue-800/50">
+              <Calendar className="w-3.5 h-3.5" />
+              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">{formatRapatDate(new Date())}</span>
+            </div>
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">Daftar jadwal rapat dan notulensi resmi organisasi.</span>
+          </div>
         </div>
         {role === 'sekretaris' && (
           <button
@@ -234,6 +244,10 @@ export default function RapatManager() {
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white truncate">{rapat.judul}</h3>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-1 sm:mt-1.5 text-gray-500 dark:text-slate-400">
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-xs">
+                      <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-600 dark:text-blue-400" />
+                      <span className="font-medium">{formatRapatDate(rapat.tanggal)}</span>
+                    </div>
                     <div className="flex items-center gap-1.5 text-[10px] sm:text-xs">
                       <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-600 dark:text-blue-400" />
                       <span className="font-mono font-medium">{rapat.waktuMulai} - {rapat.waktuSelesai}</span>
@@ -332,13 +346,26 @@ export default function RapatManager() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNotulensiModalOpen(false)} className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm" />
             <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden relative z-10 border border-gray-200 dark:border-slate-800">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none rotate-12">
+                 <OrbinLogo size={400} />
+              </div>
+
               <div className="bg-slate-900 dark:bg-slate-800 p-6 text-white flex justify-between items-center">
-                <div>
-                  <h2 className="text-lg font-bold tracking-tight">Lembar Notulensi</h2>
-                  <p className="text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">{selectedRapat?.judul} | {selectedRapat && formatDate(selectedRapat.tanggal)}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                   <button 
+                 <div>
+                   <h2 className="text-lg font-bold tracking-tight">Lembar Notulensi</h2>
+                   <div className="flex items-center gap-2 text-[10px] text-gray-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-1">
+                     <span>{selectedRapat?.judul}</span>
+                     <span className="opacity-40">|</span>
+                     <Calendar className="w-3 h-3 text-blue-500" />
+                     <span>{selectedRapat && formatRapatDate(selectedRapat.tanggal)}</span>
+                   </div>
+                 </div>
+                 <div className="flex items-center gap-3">
+                    {/* Official Seal Badge */}
+                    <div className="w-12 h-12 rounded-full border-4 border-white/20 flex items-center justify-center opacity-30 -rotate-12 group-hover:rotate-0 transition-transform duration-700">
+                       <span className="font-black text-[8px] uppercase tracking-tighter text-center leading-none">Official<br/>ORBIN<br/>EST 2017</span>
+                    </div>
+                    <button 
                      onClick={handleDownloadImage}
                      className="px-3 py-1.5 bg-white/10 rounded-lg text-white hover:bg-white/20 transition-all flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider"
                    >

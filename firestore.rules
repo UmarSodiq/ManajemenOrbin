@@ -50,11 +50,14 @@ service cloud.firestore {
 
     function isValidAnggota(data) {
       return data.keys().hasAll(['namaLengkap', 'jabatan', 'status', 'tanggalBergabung']) &&
-             data.keys().size() == 4 &&
+             data.keys().size() <= 7 &&
              data.namaLengkap is string && data.namaLengkap.size() >= 1 && data.namaLengkap.size() <= 100 &&
              data.jabatan is string && data.jabatan.size() >= 1 && data.jabatan.size() <= 100 &&
              data.status in ['aktif', 'nonaktif'] &&
-             data.tanggalBergabung is timestamp;
+             data.tanggalBergabung is timestamp &&
+             (!data.keys().hasAll(['userId']) || data.userId is string) &&
+             (!data.keys().hasAll(['fotoUrl']) || (data.fotoUrl is string && data.fotoUrl.size() <= 1000000)) &&
+             (!data.keys().hasAll(['noTelp']) || (data.noTelp is string && data.noTelp.size() <= 20));
     }
 
     function isValidIuran(data) {
@@ -169,6 +172,23 @@ service cloud.firestore {
              (!data.keys().contains('voterName') || (data.voterName is string && data.voterName.size() <= 100));
     }
 
+    function isValidGameScore(data) {
+      return data.keys().hasAll(['userId', 'namaLengkap', 'score', 'timestamp']) &&
+             data.keys().size() == 4 &&
+             data.userId == request.auth.uid &&
+             data.namaLengkap is string && data.namaLengkap.size() >= 1 && data.namaLengkap.size() <= 100 &&
+             data.score is number && data.score >= 0 &&
+             data.timestamp == request.time;
+    }
+
+    function isValidGameRoom(data) {
+      return data.keys().hasAll(['gameType', 'status', 'players', 'updatedAt']) &&
+             data.gameType is string &&
+             data.status in ['waiting', 'playing', 'finished'] &&
+             data.players is map &&
+             data.updatedAt == request.time;
+    }
+
     // --- Collections ---
 
     match /users/{userId} {
@@ -180,7 +200,11 @@ service cloud.firestore {
     match /anggota/{anggotaId} {
       allow read: if isSignedIn();
       allow create: if isSekretaris();
-      allow update: if isSekretaris();
+      allow update: if isSekretaris() || (
+        isSignedIn() && 
+        (resource.data.userId == request.auth.uid || anggotaId == request.auth.uid) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['namaLengkap', 'noTelp', 'fotoUrl'])
+      );
       allow delete: if isSekretaris();
     }
 
@@ -256,6 +280,21 @@ service cloud.firestore {
         allow read: if isSignedIn();
         allow create: if isSignedIn() && voterId == request.auth.uid && get(/databases/$(database)/documents/polling/$(pollId)).data.status == 'aktif';
       }
+    }
+
+    match /gameScores/{userId} {
+      allow read: if true;
+      allow create, update: if isSignedIn() && userId == request.auth.uid && isValidGameScore(incoming());
+    }
+
+    match /gameRooms/{roomId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidGameRoom(incoming());
+      allow update: if isSignedIn() && (
+        (incoming().players.p1.uid == request.auth.uid || incoming().players.p2.uid == request.auth.uid) &&
+        isValidGameRoom(incoming())
+      );
+      allow delete: if false; // Should move to finished status instead
     }
   }
 }

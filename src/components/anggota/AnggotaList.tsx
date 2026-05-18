@@ -21,6 +21,8 @@ export default function AnggotaList() {
   const [namaLengkap, setNamaLengkap] = useState('');
   const [jabatan, setJabatan] = useState('');
   const [userId, setUserId] = useState('');
+  const [noTelp, setNoTelp] = useState('');
+  const [fotoUrl, setFotoUrl] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const filteredAnggota = anggotaList.filter(a => 
@@ -32,6 +34,8 @@ export default function AnggotaList() {
     setNamaLengkap('');
     setJabatan('');
     setUserId('');
+    setNoTelp('');
+    setFotoUrl('');
     setErrors({});
     setEditingAnggota(null);
   };
@@ -42,6 +46,8 @@ export default function AnggotaList() {
       setNamaLengkap(anggota.namaLengkap);
       setJabatan(anggota.jabatan);
       setUserId(anggota.userId || '');
+      setNoTelp(anggota.noTelp || '');
+      setFotoUrl(anggota.fotoUrl || '');
     } else {
       resetForm();
     }
@@ -61,7 +67,9 @@ export default function AnggotaList() {
       namaLengkap,
       jabatan,
       status: editingAnggota ? editingAnggota.status : 'aktif',
-      userId: userId || undefined
+      userId: userId || undefined,
+      noTelp: noTelp || undefined,
+      fotoUrl: fotoUrl || undefined
     };
 
     if (editingAnggota) {
@@ -114,12 +122,17 @@ export default function AnggotaList() {
             <div key={a.id} className="p-4 flex flex-col gap-3">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-sm flex-shrink-0">
-                    {a.namaLengkap.charAt(0).toUpperCase()}
+                  <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-sm flex-shrink-0 overflow-hidden border border-gray-100 dark:border-slate-800">
+                    {a.fotoUrl ? (
+                      <img src={a.fotoUrl} alt={a.namaLengkap} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    ) : (
+                      a.namaLengkap.charAt(0).toUpperCase()
+                    )}
                   </div>
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900 dark:text-white text-sm truncate leading-tight uppercase mb-0.5">{a.namaLengkap}</p>
                     <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-tighter">{a.jabatan}</p>
+                    {a.noTelp && <p className="text-[9px] text-gray-400 dark:text-slate-500 font-mono mt-0.5">{a.noTelp}</p>}
                   </div>
                 </div>
                 <div className="flex gap-1 ml-4">
@@ -178,10 +191,17 @@ export default function AnggotaList() {
                 <tr key={a.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-sm">
-                        {a.namaLengkap.charAt(0).toUpperCase()}
+                      <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold text-sm overflow-hidden border border-gray-100 dark:border-slate-800">
+                        {a.fotoUrl ? (
+                          <img src={a.fotoUrl} alt={a.namaLengkap} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          a.namaLengkap.charAt(0).toUpperCase()
+                        )}
                       </div>
-                      <span className="font-semibold text-slate-900 dark:text-white text-sm">{a.namaLengkap}</span>
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-slate-900 dark:text-white text-sm">{a.namaLengkap}</span>
+                        {a.noTelp && <span className="text-[10px] text-gray-400 dark:text-slate-500 font-mono">{a.noTelp}</span>}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 font-bold text-xs text-blue-600 dark:text-blue-400 uppercase tracking-tight">{a.jabatan}</td>
@@ -275,6 +295,17 @@ export default function AnggotaList() {
                     placeholder="Contoh: Sekretaris / Anggota"
                   />
                   {errors.jabatan && <p className="text-red-500 dark:text-red-400 text-[10px] mt-1 font-bold">{errors.jabatan}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Nomor Telepon</label>
+                  <input
+                    type="tel"
+                    value={noTelp}
+                    onChange={(e) => setNoTelp(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all text-sm font-medium dark:text-white"
+                    placeholder="Contoh: 08123456789"
+                  />
                 </div>
 
                 <div>

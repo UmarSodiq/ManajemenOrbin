@@ -16,7 +16,8 @@ import {
   Wallet,
   User as UserIcon,
   CheckCircle2,
-  Instagram
+  Instagram,
+  Gamepad2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -28,6 +29,8 @@ import { useKeuangan } from '../../hooks/useKeuangan';
 import { useAnggota } from '../../hooks/useAnggota';
 import { useLanguageStore } from '../../store/useLanguageStore';
 
+import DynamicGreeting from './DynamicGreeting';
+
 export default function AnggotaDashboard() {
   const { user } = useAuth();
   const { t } = useLanguageStore();
@@ -38,6 +41,7 @@ export default function AnggotaDashboard() {
   const { anggotaList } = useAnggota();
 
   const myRecord = anggotaList.find(a => a.userId === user?.uid || a.namaLengkap.toLowerCase() === user?.username.toLowerCase());
+  const displayName = myRecord?.namaLengkap || user?.username || 'Anggota';
   const myIuranCount = iuranList.filter(i => i.anggotaId === myRecord?.id).length;
   const myAttendance = presensiList.filter(p => p.anggotaId === myRecord?.id && p.status === 'hadir').length;
 
@@ -49,27 +53,7 @@ export default function AnggotaDashboard() {
 
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 bg-gray-50 dark:bg-slate-950 min-h-screen">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Halo, {user?.username}! 👋
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Selamat datang di portal anggota orbin</p>
-        </motion.div>
-        
-        <div className="flex items-center gap-3">
-          <Link to="/profil" className="flex items-center gap-3 bg-white dark:bg-slate-900 p-2 border border-gray-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all">
-            <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/40 rounded-xl text-blue-700 dark:text-blue-400 text-sm font-bold flex items-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              Profil Saya
-            </div>
-          </Link>
-        </div>
-      </header>
+      <DynamicGreeting name={displayName} />
 
       {/* Stats Quick View */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -287,6 +271,12 @@ export default function AnggotaDashboard() {
               <Vote className="w-6 h-6" />
             </div>
             <span className="font-bold text-sm text-slate-900 dark:text-white">E-Voting</span>
+          </Link>
+          <Link to="/game" className="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-3xl border border-blue-500 shadow-lg hover:shadow-xl transition-all group flex flex-col items-center text-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+              <Gamepad2 className="w-6 h-6" />
+            </div>
+            <span className="font-bold text-sm text-white">{t('game')}</span>
           </Link>
         </div>
       </section>

@@ -21,6 +21,14 @@ export function formatDate(date: Date): string {
   }).format(date);
 }
 
+export function formatRapatDate(date: Date): string {
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
 export function calculateAge(since: Date): { years: number; months: number; days: number } {
   const now = new Date();
   let years = now.getFullYear() - since.getFullYear();

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Wallet, Users, ArrowUpCircle, Megaphone, ArrowDownRight, ChevronRight, Instagram } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 import { useKeuangan } from '../../hooks/useKeuangan';
 import { usePengumuman } from '../../hooks/usePengumuman';
 import { useAnggota } from '../../hooks/useAnggota';
@@ -13,12 +14,18 @@ import { formatCurrency, formatDate, cn } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 
+import DynamicGreeting from './DynamicGreeting';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+
 export default function BendaharaDashboard() {
+  const { user } = useAuth();
   const { saldoKas, kasMasukList, kasKeluarList, iuranList } = useKeuangan();
   const { pengumumanList } = usePengumuman();
   const { anggotaList } = useAnggota();
   const { t } = useLanguageStore();
   
+  const myRecord = anggotaList.find(a => a.userId === user?.uid || a.id === user?.uid);
+  const displayName = myRecord?.namaLengkap || user?.username || 'Anggota';
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
   const periode = `${currentYear}-${String(currentMonth).padStart(2, '0')}`;
@@ -33,6 +40,11 @@ export default function BendaharaDashboard() {
     ...kasKeluarList.map(item => ({ ...item, type: 'keluar' }))
   ].sort((a, b) => b.tanggal.getTime() - a.tanggal.getTime()).slice(0, 5);
 
+  const chartData = [
+    { name: 'Masuk', value: kasMasukList.reduce((acc, curr) => acc + curr.jumlah, 0), color: '#10B981' },
+    { name: 'Keluar', value: kasKeluarList.reduce((acc, curr) => acc + curr.jumlah, 0), color: '#EF4444' },
+  ];
+
   const stats = [
     { label: t('total_balance'), value: formatCurrency(saldoKas), icon: Wallet, color: 'text-slate-900 dark:text-white', bg: 'bg-white' },
     { label: t('unpaid_dues'), value: `${belumBayarCount} ${t('person')}`, icon: Users, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-white' },
@@ -41,12 +53,7 @@ export default function BendaharaDashboard() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-8 bg-gray-50 dark:bg-slate-950 min-h-full transition-colors duration-300">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('welcome_bendahara')}</h1>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">{t('status_finance')}</p>
-        </div>
-      </div>
+      <DynamicGreeting name={displayName} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {stats.map((stat, i) => (
@@ -68,8 +75,9 @@ export default function BendaharaDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6">
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Latest Transactions */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
           <div className="p-6 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center">
             <h2 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider">{t('latest_transactions')}</h2>
             <Link to="/bendahara/laporan" className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
@@ -104,29 +112,54 @@ export default function BendaharaDashboard() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-[1px] rounded-2xl shadow-sm overflow-hidden">
-           <div className="bg-white dark:bg-slate-900 p-6 rounded-[calc(1rem-1px)] flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                 <div className="p-3 bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-2xl shadow-inner">
-                    <Instagram className="w-8 h-8" />
-                 </div>
-                 <div>
-                    <h3 className="font-bold text-slate-900 dark:text-white">Instagram Organisasi</h3>
-                    <p className="text-pink-500 font-mono text-sm">@orbin_est.17</p>
-                 </div>
-              </div>
-              <p className="text-gray-500 dark:text-slate-400 text-sm max-w-md text-center md:text-left">
-                 Bagikan laporan kegiatan terbaru dan dokumentasi visual organisasi melalui akun Instagram resmi kita.
-              </p>
-              <a
-                href="https://www.instagram.com/orbin_est.17"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-8 py-3 bg-slate-900 dark:bg-pink-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg text-center"
-              >
-                Kunjungi Instagram
-              </a>
-           </div>
+        {/* Financial Pulse Chart - UNIQUE FEATURE */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm p-6 flex flex-col">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-white uppercase tracking-wider mb-6">Arus Kas Organisasi</h2>
+          <div className="flex-1 min-h-[250px]">
+             <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={process.env.NODE_ENV === 'production' ? '#334155' : '#e2e8f0'} />
+                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600 }} />
+                   <Tooltip 
+                     cursor={{ fill: 'transparent' }}
+                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                   />
+                   <Bar dataKey="value" radius={[10, 10, 0, 0]}>
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                   </Bar>
+                </BarChart>
+             </ResponsiveContainer>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-50 dark:border-slate-800 text-center">
+             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-loose">Visualisasi data real-time untuk transparansi keuangan remaja.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 p-[1px] rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-[calc(1rem-1px)] flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-2xl shadow-inner">
+              <Instagram className="w-8 h-8" />
+            </div>
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white">Instagram Organisasi</h3>
+              <p className="text-pink-500 font-mono text-sm">@orbin_est.17</p>
+            </div>
+          </div>
+          <p className="text-gray-500 dark:text-slate-400 text-sm max-w-md text-center md:text-left">
+            Bagikan laporan kegiatan terbaru dan dokumentasi visual organisasi melalui akun Instagram resmi kita.
+          </p>
+          <a
+            href="https://www.instagram.com/orbin_est.17"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 bg-slate-900 dark:bg-pink-600 text-white rounded-xl font-bold text-sm hover:opacity-90 transition-all shadow-lg text-center"
+          >
+            Kunjungi Instagram
+          </a>
         </div>
       </div>
     </div>

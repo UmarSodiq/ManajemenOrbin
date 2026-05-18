@@ -23,10 +23,14 @@ import {
   Camera,
   Vote,
   User,
-  Instagram
+  Instagram,
+  Gamepad2,
+  Trophy
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useAnggota } from '../../hooks/useAnggota';
 import ConnectionBanner from './ConnectionBanner';
+import OrbinLogo from './OrbinLogo';
 import ThemeToggle from './ThemeToggle';
 import { useLanguageStore } from '../../store/useLanguageStore';
 import { cn, calculateAge } from '../../lib/utils';
@@ -54,6 +58,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'minutes', path: '/rapat', icon: ClipboardList, roles: ['sekretaris', 'anggota'] },
   { id: 'polling', path: '/polling', icon: Vote, roles: ['sekretaris', 'anggota'] },
   { id: 'gallery', path: '/galeri', icon: Camera, roles: 'all' },
+  { id: 'game', path: '/game', icon: Gamepad2, roles: 'all' },
   { id: 'calendar', path: '/kalender', icon: Calendar, roles: 'all' },
   { id: 'profile', path: '/profil', icon: User, roles: ['anggota'] },
   { id: 'assets', path: '/assets', icon: Package, roles: ['sekretaris'] },
@@ -61,6 +66,7 @@ const NAV_ITEMS: NavItem[] = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, role, logout } = useAuth();
+  const { anggotaList } = useAnggota();
   const { t } = useLanguageStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -94,12 +100,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="p-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-                  <span className="font-bold text-xs">OP</span>
-                </div>
+                <OrbinLogo size={48} className="drop-shadow-2xl" />
                 <div>
-                  <h2 className="text-[14px] font-bold tracking-tight text-slate-900 dark:text-white leading-none">{t('org_name')}</h2>
-                  <p className="text-gray-400 dark:text-slate-500 text-[10px] font-mono uppercase tracking-[0.1em] mt-1">{t('org_desc')}</p>
+                  <h2 className="text-[14px] font-black tracking-tight text-slate-900 dark:text-white leading-none uppercase">{t('org_name')}</h2>
+                  <p className="text-gray-400 dark:text-slate-500 text-[10px] font-mono uppercase tracking-[0.2em] mt-1.5 opacity-70">Established 2017</p>
                 </div>
               </div>
             </div>
@@ -146,11 +150,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             
             <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-gray-100 dark:border-slate-800 mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center font-bold text-sm">
-                  {user?.username.charAt(0).toUpperCase()}
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  {user && anggotaList.find(a => a.userId === user.uid || a.id === user.uid)?.fotoUrl ? (
+                    <img 
+                      src={anggotaList.find(a => a.userId === user.uid || a.id === user.uid)?.fotoUrl} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <span className="font-bold text-blue-700 dark:text-blue-400 text-sm">
+                      {user?.username.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{user?.username}</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                    {anggotaList.find(a => a.userId === user?.uid || a.id === user?.uid)?.namaLengkap || user?.username}
+                  </p>
                   <p className="text-[10px] font-mono uppercase text-gray-400 dark:text-slate-500 tracking-wider">
                     {role === 'bendahara' ? 'Bendahara' : role === 'sekretaris' ? 'Sekretaris' : 'Anggota'}
                   </p>
@@ -195,8 +212,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex-1 flex flex-col min-w-0 relative">
           <header className="lg:hidden bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-xs font-bold">OP</div>
-              <h1 className="font-bold tracking-tight text-slate-900 dark:text-white leading-tight">ORBIN</h1>
+              <OrbinLogo size={32} />
+              <h1 className="font-black tracking-tight text-slate-900 dark:text-white leading-tight uppercase text-sm">ORBIN</h1>
             </div>
             <div className="flex items-center gap-2">
               <ThemeToggle />

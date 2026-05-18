@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Calendar, Users, Megaphone, ClipboardList, CheckCircle2, ChevronRight, Clock, MapPin, Instagram } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 import { useRapat } from '../../hooks/useRapat';
 import { usePengumuman } from '../../hooks/usePengumuman';
 import { useAnggota } from '../../hooks/useAnggota';
@@ -13,12 +14,17 @@ import { formatDate, cn } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 
+import DynamicGreeting from './DynamicGreeting';
+
 export default function SekretarisDashboard() {
+  const { user } = useAuth();
   const { rapatList, presensiList } = useRapat();
   const { pengumumanList } = usePengumuman();
   const { anggotaList } = useAnggota();
   const { t } = useLanguageStore();
   
+  const myRecord = anggotaList.find(a => a.userId === user?.uid || a.id === user?.uid);
+  const displayName = myRecord?.namaLengkap || user?.username || 'Anggota';
   const anggotaAktif = anggotaList.filter(a => a.status === 'aktif');
   
   const upcomingRapat = rapatList
@@ -40,10 +46,7 @@ export default function SekretarisDashboard() {
 
   return (
     <div className="p-8 space-y-8 bg-gray-50 dark:bg-slate-950 min-h-full transition-colors duration-300">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{t('welcome_sekretaris')}</h1>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{t('status_org')}</p>
-      </div>
+      <DynamicGreeting name={displayName} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, i) => (

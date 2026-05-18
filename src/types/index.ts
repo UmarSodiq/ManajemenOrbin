@@ -18,6 +18,8 @@ export interface Anggota {
   status: 'aktif' | 'nonaktif';
   tanggalBergabung: Date;
   userId?: string; // Link to AppUser.uid
+  fotoUrl?: string;
+  noTelp?: string;
 }
 
 export interface Komentar {
@@ -155,6 +157,14 @@ export type KegiatanInput = Omit<Kegiatan, 'id' | 'dibuatOleh'>;
 export type PollingInput = Omit<Polling, 'id' | 'createdAt' | 'dibuatOleh'>;
 export type VoteInput = Omit<Vote, 'id' | 'timestamp'>;
 export type KomentarInput = Pick<Komentar, 'targetId' | 'isi'>;
+
+export interface GameScore {
+  id: string;
+  userId: string;
+  namaLengkap: string;
+  score: number;
+  timestamp: Date;
+}
 
 export enum OperationType {
   CREATE = 'create',

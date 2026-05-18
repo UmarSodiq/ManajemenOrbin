@@ -18,6 +18,8 @@ import {
   type DocumentReference,
   type CollectionReference
 } from 'firebase/firestore';
+import { OperationType, FirestoreErrorInfo } from '../types';
+
 // Gunakan variabel lingkungan untuk konfigurasi Firebase
 const finalConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',

@@ -165,6 +165,39 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["pilihan", "timestamp"]
+    },
+    "GameScore": {
+      "title": "Game Score",
+      "description": "Orbin Star Collector high scores",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "namaLengkap": { "type": "string" },
+        "score": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "namaLengkap", "score", "timestamp"]
+    },
+    "GameRoom": {
+      "title": "Game Room",
+      "description": "Multiplayer game session",
+      "type": "object",
+      "properties": {
+        "gameType": { "type": "string" },
+        "status": { "type": "string", "enum": ["waiting", "playing", "finished"] },
+        "players": { 
+          "type": "object",
+          "properties": {
+            "p1": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } },
+            "p2": { "type": "object", "properties": { "uid": { "type": "string" }, "name": { "type": "string" } } }
+          }
+        },
+        "gameState": { "type": "object" },
+        "turn": { "type": "string" },
+        "winner": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["gameType", "status", "players", "updatedAt"]
     }
   },
   "firestore": {
@@ -180,6 +213,8 @@
     "galeri": { "schema": "Galeri", "description": "Activity documentation" },
     "kegiatan": { "schema": "Kegiatan", "description": "Calendar events" },
     "polling": { "schema": "Polling", "description": "Polls and voting" },
-    "polling/{pollId}/voters": { "schema": "Vote", "description": "Votes cast in a poll" }
+    "polling/{pollId}/voters": { "schema": "Vote", "description": "Votes cast in a poll" },
+    "gameScores": { "schema": "GameScore", "description": "Game high scores" },
+    "gameRooms": { "schema": "GameRoom", "description": "Active multiplayer game sessions" }
   }
 }
