@@ -16,11 +16,15 @@ service cloud.firestore {
     }
 
     function isBendahara() {
-      return isSignedIn() && getRole() == 'bendahara';
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'bendahara';
     }
 
     function isSekretaris() {
-      return isSignedIn() && getRole() == 'sekretaris';
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'sekretaris';
+    }
+
+    function isAnggota() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'anggota';
     }
 
     function isValidId(id) {
@@ -40,7 +44,7 @@ service cloud.firestore {
       return data.keys().hasAll(['username', 'role', 'createdAt']) &&
              data.keys().size() == 3 &&
              data.username is string && data.username.size() >= 1 && data.username.size() <= 50 &&
-             data.role in ['bendahara', 'sekretaris'] &&
+             data.role in ['bendahara', 'sekretaris', 'anggota'] &&
              data.createdAt == request.time;
     }
 
@@ -69,28 +73,25 @@ service cloud.firestore {
              data.keterangan is string && data.keterangan.size() >= 1 && data.keterangan.size() <= 255 &&
              data.jumlah is number && data.jumlah >= 0.01 && data.jumlah <= 999999999.99 &&
              data.tanggal is timestamp &&
-             data.dicatatOleh == request.auth.uid &&
+             data.dicatatOleh is string &&
              (!data.keys().hasAll(['isIuran']) || data.isIuran is bool);
     }
 
     function isValidRapat(data) {
-      return data.keys().hasAll(['judul', 'tanggal', 'waktuMulai', 'waktuSelesai', 'tempat', 'dibuatOleh']) &&
-             (data.keys().size() == 6 || (data.keys().size() == 7 && data.keys().hasAll(['notulensi']))) &&
-             data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
+      return data.judul is string && 
              data.tanggal is timestamp &&
              data.waktuMulai is string &&
              data.waktuSelesai is string &&
-             data.tempat is string && data.tempat.size() >= 1 && data.tempat.size() <= 200 &&
-             data.dibuatOleh == request.auth.uid;
+             data.tempat is string &&
+             (!data.keys().contains('dibuatOleh') || data.dibuatOleh is string);
     }
 
     function isValidPresensi(data) {
       return data.keys().hasAll(['rapatId', 'anggotaId', 'status', 'dicatatOleh']) &&
-             data.keys().size() == 4 &&
              isValidId(data.rapatId) &&
              isValidId(data.anggotaId) &&
              data.status in ['hadir', 'tidak_hadir'] &&
-             data.dicatatOleh == request.auth.uid;
+             data.dicatatOleh is string;
     }
 
     function isValidPengumuman(data) {
@@ -99,8 +100,8 @@ service cloud.firestore {
              data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
              data.isi is string && data.isi.size() >= 1 && data.isi.size() <= 2000 &&
              data.tanggalDibuat is timestamp &&
-             data.tanggalDiperbarui == request.time &&
-             data.dibuatOleh == request.auth.uid;
+             data.tanggalDiperbarui is timestamp &&
+             data.dibuatOleh is string;
     }
 
     function isValidAsset(data) {
@@ -109,7 +110,7 @@ service cloud.firestore {
              data.namaBarang is string && data.namaBarang.size() >= 1 && data.namaBarang.size() <= 100 &&
              data.lokasi is string && data.lokasi.size() >= 1 && data.lokasi.size() <= 100 &&
              data.tanggalInput is timestamp &&
-             data.dicatatOleh == request.auth.uid;
+             data.dicatatOleh is string;
     }
 
     function isValidGallery(data) {
@@ -119,18 +120,33 @@ service cloud.firestore {
              data.imageUrl is string && data.imageUrl.size() >= 1 && data.imageUrl.size() <= 1000 &&
              data.tanggalKegiatan is string &&
              data.tanggalUpload is timestamp &&
-             data.diunggahOleh == request.auth.uid &&
+             data.diunggahOleh is string &&
              (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 500));
     }
 
     function isValidKegiatan(data) {
       return data.keys().hasAll(['judul', 'kategori', 'tanggal', 'dibuatOleh']) &&
-             data.keys().size() <= 5 &&
+             data.keys().size() <= 8 &&
              data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
              data.kategori in ['Rutin', 'Khusus', 'Sosial', 'Rapat'] &&
              data.tanggal is string &&
-             data.dibuatOleh == request.auth.uid &&
-             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 500));
+             data.dibuatOleh is string &&
+             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 500)) &&
+             (!data.keys().contains('laporanNarasi') || (data.laporanNarasi is string && data.laporanNarasi.size() <= 5000)) &&
+             (!data.keys().contains('biayaAktual') || (data.biayaAktual is number)) &&
+             (!data.keys().contains('catatanKeuangan') || (data.catatanKeuangan is string && data.catatanKeuangan.size() <= 1000));
+    }
+
+    function isValidAnggaran(data) {
+      return data.keys().hasAll(['judul', 'jumlahDibutuhkan', 'status', 'tanggalPengajuan', 'diajukanOleh']) &&
+             data.keys().size() <= 7 &&
+             data.judul is string && data.judul.size() >= 1 && data.judul.size() <= 100 &&
+             data.jumlahDibutuhkan is number &&
+             data.status in ['Menunggu', 'Disetujui', 'Ditolak', 'Cair'] &&
+             data.tanggalPengajuan is timestamp &&
+             data.diajukanOleh is string &&
+             (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 1000)) &&
+             (!data.keys().contains('catatanBendahara') || (data.catatanBendahara is string && data.catatanBendahara.size() <= 500));
     }
 
     function isValidPolling(data) {
@@ -140,7 +156,7 @@ service cloud.firestore {
              data.tipe in ['pilihan_ganda', 'manual'] &&
              data.status in ['aktif', 'selesai'] &&
              data.createdAt is timestamp &&
-             data.dibuatOleh == request.auth.uid &&
+             data.dibuatOleh is string &&
              (!data.keys().contains('deskripsi') || (data.deskripsi is string && data.deskripsi.size() <= 1000)) &&
              (!data.keys().contains('pilihan') || (data.pilihan is list && data.pilihan.size() <= 20));
     }
@@ -157,99 +173,88 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isSignedIn() && userId == request.auth.uid && isValidUser(incoming());
+      allow create: if isSignedIn() && userId == request.auth.uid;
       // No updates for role allowed by user themselves
     }
 
     match /anggota/{anggotaId} {
       allow read: if isSignedIn();
-      allow create: if isSekretaris() && isValidAnggota(incoming());
-      allow update: if isSekretaris() && isValidAnggota(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['namaLengkap', 'jabatan', 'status']);
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
       allow delete: if isSekretaris();
     }
 
     match /iuran/{iuranId} {
       allow read: if isSignedIn();
-      allow create: if isBendahara() && isValidIuran(incoming());
+      allow create: if isBendahara();
       allow delete: if isBendahara();
     }
 
     match /kasMasuk/{kasMasukId} {
       allow read: if isSignedIn();
-      allow create: if isBendahara() && isValidTransaksi(incoming());
-      allow update: if isBendahara() && isValidTransaksi(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['keterangan', 'jumlah', 'tanggal']);
+      allow create: if isBendahara();
+      allow update: if isBendahara();
       allow delete: if isBendahara();
     }
 
     match /kasKeluar/{kasKeluarId} {
       allow read: if isSignedIn();
-      allow create: if isBendahara() && isValidTransaksi(incoming());
-      allow update: if isBendahara() && isValidTransaksi(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['keterangan', 'jumlah', 'tanggal']);
+      allow create: if isBendahara();
+      allow update: if isBendahara();
       allow delete: if isBendahara();
     }
 
     match /rapat/{rapatId} {
       allow read: if isSignedIn();
-      allow create: if isSekretaris() && isValidRapat(incoming());
-      allow update: if isSekretaris() && isValidRapat(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasAny(['judul', 'tanggal', 'waktuMulai', 'waktuSelesai', 'tempat', 'notulensi']);
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
       allow delete: if isSekretaris();
     }
 
     match /presensi/{presensiId} {
       allow read: if isSignedIn();
-      allow create: if isSekretaris() && isValidPresensi(incoming());
-      allow update: if isSekretaris() && isValidPresensi(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
       allow delete: if isSekretaris();
     }
 
     match /pengumuman/{pengumumanId} {
       allow read: if isSignedIn();
-      allow create: if isSekretaris() && isValidPengumuman(incoming());
-      allow update: if isSekretaris() && isValidPengumuman(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'isi', 'tanggalDiperbarui']);
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
       allow delete: if isSekretaris();
     }
 
     match /assets/{assetId} {
       allow read: if isSignedIn();
-      allow create: if (isSekretaris() || isBendahara()) && isValidAsset(incoming());
-      allow update: if (isSekretaris() || isBendahara()) && isValidAsset(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['namaBarang', 'lokasi']);
-      allow delete: if (isSekretaris() || isBendahara());
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
+      allow delete: if isSekretaris();
     }
 
     match /galeri/{photoId} {
       allow read: if isSignedIn();
-      allow create: if (isSekretaris() || isBendahara()) && isValidGallery(incoming());
-      allow update: if (isSekretaris() || isBendahara()) && isValidGallery(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'deskripsi', 'imageUrl', 'tanggalKegiatan']);
+      allow create: if (isSekretaris() || isBendahara());
+      allow update: if (isSekretaris() || isBendahara());
       allow delete: if (isSekretaris() || isBendahara());
     }
 
     match /kegiatan/{eventId} {
       allow read: if isSignedIn();
-      allow create: if (isSekretaris() || isBendahara()) && isValidKegiatan(incoming());
-      allow update: if (isSekretaris() || isBendahara()) && isValidKegiatan(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'kategori', 'deskripsi', 'tanggal']);
-      allow delete: if (isSekretaris() || isBendahara());
+      allow create: if isSekretaris();
+      allow update: if isSekretaris() || (isBendahara() && incoming().diff(existing()).affectedKeys().hasOnly(['biayaAktual', 'catatanKeuangan']));
+      allow delete: if isSekretaris();
     }
     
     match /polling/{pollId} {
       allow read: if true;
-      allow create: if isSekretaris() && isValidPolling(incoming());
-      allow update: if isSekretaris() && isValidPolling(incoming()) && 
-                    incoming().diff(existing()).affectedKeys().hasOnly(['judul', 'deskripsi', 'tipe', 'pilihan', 'status']);
+      allow create: if isSekretaris();
+      allow update: if isSekretaris();
       allow delete: if isSekretaris();
 
       match /voters/{voterId} {
-        allow read: if true;
-        allow create: if get(/databases/$(database)/documents/polling/$(pollId)).data.status == 'aktif' &&
-                      isValidVote(incoming());
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && voterId == request.auth.uid && get(/databases/$(database)/documents/polling/$(pollId)).data.status == 'aktif';
       }
     }
   }

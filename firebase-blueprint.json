@@ -126,14 +126,17 @@
     },
     "Kegiatan": {
       "title": "Kegiatan",
-      "description": "Calendar event",
+      "description": "Calendar event with integrated reporting",
       "type": "object",
       "properties": {
         "judul": { "type": "string" },
         "kategori": { "type": "string", "enum": ["Rutin", "Khusus", "Sosial", "Rapat"] },
         "deskripsi": { "type": "string" },
         "tanggal": { "type": "string", "format": "date" },
-        "dibuatOleh": { "type": "string" }
+        "dibuatOleh": { "type": "string" },
+        "laporanNarasi": { "type": "string" },
+        "biayaAktual": { "type": "number" },
+        "catatanKeuangan": { "type": "string" }
       },
       "required": ["judul", "kategori", "tanggal", "dibuatOleh"]
     },
