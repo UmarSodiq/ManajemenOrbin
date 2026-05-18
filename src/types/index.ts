@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type Role = 'bendahara' | 'sekretaris';
+export type Role = 'bendahara' | 'sekretaris' | 'anggota';
 
 export interface AppUser {
   uid: string;
@@ -17,6 +17,16 @@ export interface Anggota {
   jabatan: string;
   status: 'aktif' | 'nonaktif';
   tanggalBergabung: Date;
+  userId?: string; // Link to AppUser.uid
+}
+
+export interface Komentar {
+  id: string;
+  targetId: string; // ID for pengumuman, rapat, etc.
+  userId: string;
+  username: string;
+  isi: string;
+  tanggal: Date;
 }
 
 export interface Iuran {
@@ -109,6 +119,9 @@ export interface Kegiatan {
   deskripsi?: string;
   tanggal: string; // YYYY-MM-DD
   dibuatOleh: string;
+  laporanNarasi?: string;
+  biayaAktual?: number;
+  catatanKeuangan?: string;
 }
 
 export interface Polling {
@@ -141,6 +154,7 @@ export type GaleriInput = Omit<Galeri, 'id' | 'tanggalUpload' | 'diunggahOleh'>;
 export type KegiatanInput = Omit<Kegiatan, 'id' | 'dibuatOleh'>;
 export type PollingInput = Omit<Polling, 'id' | 'createdAt' | 'dibuatOleh'>;
 export type VoteInput = Omit<Vote, 'id' | 'timestamp'>;
+export type KomentarInput = Pick<Komentar, 'targetId' | 'isi'>;
 
 export enum OperationType {
   CREATE = 'create',

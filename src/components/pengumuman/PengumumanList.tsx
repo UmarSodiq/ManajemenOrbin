@@ -4,13 +4,102 @@
  */
 
 import React, { useState } from 'react';
-import { Megaphone, Plus, Search, Edit2, Trash2, Calendar, Clock, ChevronRight } from 'lucide-react';
+import { 
+  Megaphone, 
+  Plus, 
+  Search, 
+  Edit2, 
+  Trash2, 
+  Calendar, 
+  Clock, 
+  ChevronRight, 
+  MessageSquare, 
+  Send, 
+  X,
+  XCircle,
+  User
+} from 'lucide-react';
 import { usePengumuman } from '../../hooks/usePengumuman';
 import { useAuth } from '../../hooks/useAuth';
+import { useKomentar } from '../../hooks/useKomentar';
 import { Pengumuman, PengumumanInput } from '../../types';
 import { cn, formatDate } from '../../lib/utils';
 import { validateRequiredFields } from '../../utils/validation';
 import { motion, AnimatePresence } from 'motion/react';
+
+function CommentSection({ targetId }: { targetId: string }) {
+  const { comments, isLoading, addComment, deleteComment } = useKomentar(targetId);
+  const { user } = useAuth();
+  const [newComment, setNewComment] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    await addComment(newComment);
+    setNewComment('');
+  };
+
+  return (
+    <div className="mt-10 pt-10 border-t border-gray-100 dark:border-slate-800">
+      <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-2 mb-6">
+        <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        Diskusi & Komentar ({comments.length})
+      </h3>
+
+      <form onSubmit={handleSubmit} className="mb-8">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Tulis pendapat atau pertanyaan..."
+            className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-blue-600 outline-none transition-all dark:text-white"
+          />
+          <button 
+            type="submit"
+            disabled={!newComment.trim()}
+            className="px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+      </form>
+
+      <div className="space-y-6">
+        {isLoading ? (
+          <div className="text-center py-4 text-gray-400 dark:text-slate-500 text-xs italic">Memuat diskusi...</div>
+        ) : comments.length === 0 ? (
+          <div className="text-center py-8 text-gray-400 dark:text-slate-500 text-xs italic bg-slate-50 dark:bg-slate-900/50 rounded-2xl">
+            Belum ada komentar. Jadi yang pertama berpendapat!
+          </div>
+        ) : (
+          comments.map((comment) => (
+            <div key={comment.id} className="group flex gap-4">
+              <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
+                <User className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">{comment.username}</h4>
+                  <span className="text-[9px] text-gray-400 dark:text-slate-500 font-mono uppercase">{formatDate(comment.tanggal)}</span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-slate-400 mt-1 leading-relaxed">{comment.isi}</p>
+                {user?.uid === comment.userId && (
+                  <button 
+                    onClick={() => deleteComment(comment.id)}
+                    className="text-[10px] text-red-400 dark:text-red-500/70 font-bold hover:text-red-600 dark:hover:text-red-400 mt-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    Hapus
+                  </button>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function PengumumanList() {
   const { role } = useAuth();
@@ -57,16 +146,16 @@ export default function PengumumanList() {
   };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 min-h-full">
+    <div className="p-4 sm:p-6 lg:p-8 bg-gray-50 dark:bg-slate-950 min-h-full">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 sm:mb-8">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Pengumuman</h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">Informasi terkini dari organisasi pemuda.</p>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Pengumuman</h1>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">Informasi terkini dari organisasi pemuda.</p>
         </div>
         {role === 'sekretaris' && (
           <button
             onClick={() => handleOpenModal()}
-            className="w-full md:w-auto bg-slate-900 text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-slate-800 transition-all shadow-sm"
+            className="w-full md:w-auto bg-slate-900 dark:bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 font-semibold hover:bg-slate-800 dark:hover:bg-blue-700 transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" />
             <span className="text-sm">Buat Pengumuman</span>
@@ -78,9 +167,9 @@ export default function PengumumanList() {
         {/* List */}
         <div className="space-y-3 sm:space-y-4">
           {isLoading ? (
-            <div className="p-12 text-center text-gray-400 italic bg-white rounded-2xl border border-gray-200 shadow-sm text-sm">Memuat pengumuman...</div>
+            <div className="p-12 text-center text-gray-400 dark:text-slate-500 italic bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm text-sm">Memuat pengumuman...</div>
           ) : pengumumanList.length === 0 ? (
-            <div className="p-12 text-center text-gray-400 italic bg-white rounded-2xl border border-gray-200 shadow-sm text-sm">Belum ada pengumuman.</div>
+            <div className="p-12 text-center text-gray-400 dark:text-slate-500 italic bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 shadow-sm text-sm">Belum ada pengumuman.</div>
           ) : pengumumanList.map((item) => (
             <motion.div
               layout
@@ -89,8 +178,8 @@ export default function PengumumanList() {
               className={cn(
                 "p-4 sm:p-6 rounded-2xl border transition-all cursor-pointer group relative",
                 selectedItem?.id === item.id 
-                  ? "bg-slate-900 border-slate-900 text-white shadow-lg ring-1 ring-slate-900" 
-                  : "bg-white border-gray-200 hover:border-blue-300"
+                  ? "bg-slate-900 dark:bg-blue-600 border-slate-900 dark:border-blue-500 text-white shadow-lg ring-1 ring-slate-900 dark:ring-blue-500" 
+                  : "bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-500"
               )}
             >
               <div className="flex justify-between items-start gap-4">
@@ -99,16 +188,16 @@ export default function PengumumanList() {
                     <span className={cn(
                       "text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.15em] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg border transition-colors",
                       selectedItem?.id === item.id 
-                        ? "bg-white/10 border-white/20 text-white/70 font-bold" 
-                        : "bg-slate-50 border-gray-100 text-gray-400"
+                        ? "bg-white/10 dark:bg-white/10 border-white/20 dark:border-white/20 text-white/70 font-bold" 
+                        : "bg-slate-50 dark:bg-slate-800 border-gray-100 dark:border-slate-700 text-gray-400 dark:text-slate-500"
                     )}>
                       {formatDate(item.tanggalDibuat)}
                     </span>
                   </div>
-                  <h3 className="font-bold text-sm sm:text-base truncate pr-8 leading-tight uppercase">{item.judul}</h3>
+                  <h3 className="font-bold text-sm sm:text-base truncate pr-8 leading-tight uppercase text-slate-900 dark:text-white group-[.bg-slate-900]:text-white group-[.bg-blue-600]:text-white">{item.judul}</h3>
                   <p className={cn(
                     "text-xs sm:text-[13px] mt-1.5 sm:mt-2 line-clamp-2 leading-relaxed transition-colors",
-                    selectedItem?.id === item.id ? "text-slate-400" : "text-gray-500"
+                    selectedItem?.id === item.id ? "text-slate-400 dark:text-blue-100" : "text-gray-500 dark:text-slate-400"
                   )}>
                     {item.isi}
                   </p>
@@ -120,13 +209,13 @@ export default function PengumumanList() {
                   )}>
                     <button 
                       onClick={(e) => { e.stopPropagation(); handleOpenModal(item); }} 
-                      className={cn("p-1.5 rounded-lg transition-all", selectedItem?.id === item.id ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-slate-900")}
+                      className={cn("p-1.5 rounded-lg transition-all", selectedItem?.id === item.id ? "text-white/40 hover:text-white" : "text-gray-400 hover:text-slate-900 dark:text-slate-500 dark:hover:text-white")}
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button 
                       onClick={(e) => { e.stopPropagation(); hapusPengumuman(item.id); }} 
-                      className={cn("p-1.5 rounded-lg transition-all", selectedItem?.id === item.id ? "text-white/40 hover:text-red-400" : "text-gray-400 hover:text-red-500")}
+                      className={cn("p-1.5 rounded-lg transition-all", selectedItem?.id === item.id ? "text-white/40 hover:text-red-400" : "text-gray-400 hover:text-red-500 dark:text-slate-500 dark:hover:text-red-400")}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -146,29 +235,30 @@ export default function PengumumanList() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="bg-white rounded-2xl border border-gray-200 p-10 shadow-sm"
+                className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-800 p-10 shadow-sm"
               >
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100/50">
-                    <Megaphone className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center border border-blue-100/50 dark:border-blue-900/50">
+                    <Megaphone className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400">Pengumuman Resmi</p>
-                    <p className="text-sm font-semibold text-slate-900 mt-0.5">{formatDate(selectedItem.tanggalDibuat)}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-400 dark:text-slate-500">Pengumuman Resmi</p>
+                    <p className="text-sm font-semibold text-slate-900 dark:text-white mt-0.5">{formatDate(selectedItem.tanggalDibuat)}</p>
                   </div>
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 tracking-tight leading-[1.2] mb-6">{selectedItem.judul}</h2>
-                <div className="w-12 h-1 bg-blue-600 rounded-full mb-8 shadow-sm shadow-blue-600/30" />
-                <div className="prose prose-slate max-w-none">
-                  <p className="text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">{selectedItem.isi}</p>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-[1.2] mb-6 uppercase">{selectedItem.judul}</h2>
+                <div className="w-12 h-1 bg-blue-600 dark:bg-blue-500 rounded-full mb-8 shadow-sm shadow-blue-600/30" />
+                <div className="prose prose-slate dark:prose-invert max-w-none">
+                  <p className="text-gray-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap font-medium">{selectedItem.isi}</p>
                 </div>
+                <CommentSection targetId={selectedItem.id} />
               </motion.div>
             ) : (
-              <div className="bg-slate-50/50 rounded-2xl border-2 border-dashed border-gray-200 p-20 flex flex-col items-center justify-center text-center">
-                <div className="p-4 bg-white rounded-full shadow-sm mb-4">
-                  <Megaphone className="w-10 h-10 text-gray-200" />
+              <div className="bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border-2 border-dashed border-gray-200 dark:border-slate-800 p-20 flex flex-col items-center justify-center text-center">
+                <div className="p-4 bg-white dark:bg-slate-900 rounded-full shadow-sm mb-4">
+                  <Megaphone className="w-10 h-10 text-gray-200 dark:text-slate-800" />
                 </div>
-                <p className="text-gray-400 text-sm font-medium">Pilih salah satu pengumuman<br />untuk melihat detail informasi lengkap.</p>
+                <p className="text-gray-400 dark:text-slate-500 text-sm font-medium">Pilih salah satu pengumuman<br />untuk melihat detail informasi lengkap.</p>
               </div>
             )}
           </AnimatePresence>
@@ -179,36 +269,37 @@ export default function PengumumanList() {
       <AnimatePresence>
         {selectedItem && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:hidden">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedItem(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedItem(null)} className="absolute inset-0 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm" />
             <motion.div 
                initial={{ opacity: 0, scale: 0.9, y: 20 }} 
                animate={{ opacity: 1, scale: 1, y: 0 }} 
                exit={{ opacity: 0, scale: 0.9, y: 20 }} 
-               className="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative z-10 border border-gray-100"
+               className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden relative z-10 border border-gray-100 dark:border-slate-800"
             >
               <div className="p-6 sm:p-8">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100/50">
-                      <Megaphone className="w-5 h-5 text-blue-600" />
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/40 flex items-center justify-center border border-blue-100/50 dark:border-blue-900/50">
+                      <Megaphone className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400">Pengumuman</p>
-                      <p className="text-xs font-semibold text-slate-900 mt-0.5">{formatDate(selectedItem.tanggalDibuat)}</p>
+                      <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-gray-400 dark:text-slate-500">Pengumuman</p>
+                      <p className="text-xs font-semibold text-slate-900 dark:text-white mt-0.5">{formatDate(selectedItem.tanggalDibuat)}</p>
                     </div>
                   </div>
-                  <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-slate-50 rounded-full transition-colors">
-                    <XCircle className="w-5 h-5 text-gray-400" />
+                  <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-colors">
+                    <XCircle className="w-5 h-5 text-gray-400 dark:text-slate-500" />
                   </button>
                 </div>
-                <h2 className="text-xl font-bold text-slate-900 tracking-tight leading-tight mb-4 uppercase">{selectedItem.judul}</h2>
-                <div className="w-10 h-1 bg-blue-600 rounded-full mb-6" />
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight leading-tight mb-4 uppercase">{selectedItem.judul}</h2>
+                <div className="w-10 h-1 bg-blue-600 dark:bg-blue-500 rounded-full mb-6" />
                 <div className="max-h-[50vh] overflow-y-auto pr-2">
-                  <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap font-medium">{selectedItem.isi}</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm leading-relaxed whitespace-pre-wrap font-medium">{selectedItem.isi}</p>
+                  <CommentSection targetId={selectedItem.id} />
                 </div>
                 <button 
                   onClick={() => setSelectedItem(null)}
-                  className="w-full mt-8 py-3 bg-slate-900 text-white rounded-xl font-bold text-sm"
+                  className="w-full mt-8 py-3 bg-slate-900 dark:bg-blue-600 text-white rounded-xl font-bold text-sm"
                 >
                   Tutup
                 </button>
@@ -222,42 +313,42 @@ export default function PengumumanList() {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden relative z-10 border border-gray-200">
-              <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm" />
+            <motion.div initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }} className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden relative z-10 border border-gray-200 dark:border-slate-800">
+              <div className="bg-slate-900 dark:bg-slate-800 p-6 text-white flex justify-between items-center">
                 <h2 className="text-xl font-bold tracking-tight">{editingItem ? 'Edit Konten Pengumuman' : 'Publikasi Pengumuman Baru'}</h2>
               </div>
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Judul Pengumuman</label>
+                  <label className="block text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Judul Pengumuman</label>
                   <input 
                     type="text" 
                     value={judul} 
                     onChange={(e) => setJudul(e.target.value)} 
                     className={cn(
-                      "w-full px-4 py-3 bg-slate-50 border rounded-xl font-bold text-slate-900 focus:ring-2 focus:ring-blue-600 outline-none transition-all",
-                      errors.judul ? "border-red-300 ring-2 ring-red-100" : "border-gray-200"
+                      "w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-xl font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-600 outline-none transition-all",
+                      errors.judul ? "border-red-300 dark:border-red-900 ring-2 ring-red-100 dark:ring-red-900/20" : "border-gray-200 dark:border-slate-700"
                     )} 
                     placeholder="Masukkan judul yang informatif..." 
                   />
                   {errors.judul && <p className="text-red-500 text-[10px] mt-2 font-bold uppercase tracking-wide">{errors.judul}</p>}
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Konten Detail</label>
+                  <label className="block text-[11px] font-bold text-gray-400 dark:text-slate-500 uppercase tracking-widest mb-2">Konten Detail</label>
                   <textarea 
                     value={isi} 
                     onChange={(e) => setIsi(e.target.value)} 
                     className={cn(
-                      "w-full px-4 py-3 bg-slate-50 border rounded-xl min-h-[220px] text-sm font-medium text-slate-700 leading-relaxed focus:ring-2 focus:ring-blue-600 outline-none transition-all",
-                      errors.isi ? "border-red-300 ring-2 ring-red-100" : "border-gray-200"
+                      "w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border rounded-xl min-h-[220px] text-sm font-medium text-slate-700 dark:text-slate-300 leading-relaxed focus:ring-2 focus:ring-blue-600 outline-none transition-all",
+                      errors.isi ? "border-red-300 dark:border-red-900 ring-2 ring-red-100 dark:ring-red-900/20" : "border-gray-200 dark:border-slate-700"
                     )} 
                     placeholder="Sampaikan pesan atau detail informasi selengkap mungkin kepada seluruh anggota..." 
                   />
                   {errors.isi && <p className="text-red-500 text-[10px] mt-2 font-bold uppercase tracking-wide">{errors.isi}</p>}
                 </div>
                 <div className="pt-4 flex gap-3">
-                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-6 py-3 border border-gray-200 rounded-xl font-bold text-slate-500 hover:bg-slate-50 transition-all">Batal</button>
-                  <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg shadow-slate-100 hover:bg-slate-800 transition-all">Publish</button>
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 px-6 py-3 border border-gray-200 dark:border-slate-700 rounded-xl font-bold text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all">Batal</button>
+                  <button type="submit" className="flex-1 px-6 py-3 bg-slate-900 dark:bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-slate-100 dark:shadow-none hover:bg-slate-800 dark:hover:bg-blue-700 transition-all">Publish</button>
                 </div>
               </form>
             </motion.div>
@@ -265,15 +356,5 @@ export default function PengumumanList() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-function XCircle({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <path d="m15 9-6 6" />
-      <path d="m9 9 6 6" />
-    </svg>
   );
 }

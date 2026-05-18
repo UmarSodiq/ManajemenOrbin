@@ -18,20 +18,17 @@ import {
   type DocumentReference,
   type CollectionReference
 } from 'firebase/firestore';
-import firebaseConfig from '../../firebase-applet-config.json';
-import { OperationType, FirestoreErrorInfo } from '../types';
-
-// Support both the local config file and environment variables
+// Gunakan variabel lingkungan untuk konfigurasi Firebase
 const finalConfig = {
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || firebaseConfig.projectId,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || firebaseConfig.appId,
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || firebaseConfig.apiKey,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || firebaseConfig.authDomain,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || firebaseConfig.storageBucket,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || firebaseConfig.messagingSenderId,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
 };
 
-const databaseId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || firebaseConfig.firestoreDatabaseId;
+const databaseId = import.meta.env.VITE_FIREBASE_FIRESTORE_DATABASE_ID || '(default)';
 
 const app = initializeApp(finalConfig);
 export const db = getFirestore(app, databaseId);
@@ -54,19 +51,19 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
     operationType,
     path
   }
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  console.error('Kesalahan Firestore: ', JSON.stringify(errInfo));
   throw new Error(JSON.stringify(errInfo));
 }
 
 async function testConnection() {
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
-    console.log('Firebase connection test: Success');
+    console.log('Tes koneksi Firebase: Berhasil');
   } catch (error) {
     if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration.");
+      console.error("Silakan periksa konfigurasi Firebase Anda.");
     } else {
-      console.warn('Firebase connection test: Initial restricted access expected (Rules not yet deployed)');
+      console.warn('Tes koneksi Firebase: Akses terbatas awal diharapkan (Aturan belum disebarkan)');
     }
   }
 }

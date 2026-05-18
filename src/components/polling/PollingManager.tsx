@@ -91,20 +91,20 @@ export default function PollingManager() {
   }
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8 bg-gray-50 dark:bg-slate-950 min-h-screen">
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tighter flex items-center gap-3">
-              <VoteIcon className="w-10 h-10 text-indigo-600" />
+            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center gap-3">
+              <VoteIcon className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
               E-VOTING & POLLING
             </h1>
-            <p className="text-gray-500 mt-1 font-medium italic">Satu suara sangat berharga untuk kemajuan organisasi.</p>
+            <p className="text-gray-500 dark:text-slate-400 mt-1 font-medium italic">Satu suara sangat berharga untuk kemajuan organisasi.</p>
           </div>
           {role === 'sekretaris' && (
             <button
               onClick={() => setIsAdding(true)}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 flex items-center gap-2 active:scale-95"
+              className="px-6 py-3 bg-indigo-600 dark:bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-blue-700 transition-all shadow-lg shadow-indigo-100 dark:shadow-none flex items-center gap-2 active:scale-95"
             >
               <Plus className="w-4 h-4" />
               Buat Polling Baru
@@ -113,15 +113,15 @@ export default function PollingManager() {
         </div>
 
         {/* Search & Filter */}
-        <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 bg-white dark:bg-slate-900 p-4 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm">
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
             <input 
               type="text" 
               placeholder="Cari judul polling..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-slate-50 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
+              className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-xs font-bold outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 transition-all dark:text-white"
             />
           </div>
           <div className="flex gap-2">
@@ -129,7 +129,7 @@ export default function PollingManager() {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-4 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === s ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'bg-slate-50 text-slate-400 hover:bg-slate-100'}`}
+                className={`px-4 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${statusFilter === s ? 'bg-indigo-600 dark:bg-blue-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' : 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
               >
                 {s === 'all' ? 'Semua' : s}
               </button>
@@ -142,7 +142,7 @@ export default function PollingManager() {
         {/* Poll List */}
         <div className="lg:col-span-12 space-y-4">
           {filteredPolls.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100 italic text-slate-400 font-medium">
+            <div className="text-center py-20 bg-white dark:bg-slate-900 rounded-[3rem] border-2 border-dashed border-slate-100 dark:border-slate-800 italic text-slate-400 dark:text-slate-600 font-medium">
               {searchQuery || statusFilter !== 'all' ? 'Tidak ada polling yang cocok dengan pencarian.' : 'Belum ada polling yang dibuat.'}
             </div>
           ) : (
@@ -163,58 +163,58 @@ export default function PollingManager() {
       {/* Create Modal */}
       <AnimatePresence>
         {isAdding && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-slate-950/80 backdrop-blur-md">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 40 }}
-              className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto border border-slate-100 dark:border-slate-800"
             >
-              <div className="p-8 border-b border-slate-50 flex items-center justify-between sticky top-0 bg-white z-10">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase italic">BUAT POLLING BARU</h2>
-                <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-100 rounded-full transition-all">
-                  <XCircle className="w-6 h-6 text-slate-400" />
+              <div className="p-8 border-b border-slate-50 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-900 z-10">
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase italic">BUAT POLLING BARU</h2>
+                <button onClick={() => setIsAdding(false)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all">
+                  <XCircle className="w-6 h-6 text-slate-400 dark:text-slate-500" />
                 </button>
               </div>
 
               <form onSubmit={handleSubmit} className="p-8 space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Judul Polling / Pilih Ketua</label>
+                  <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Judul Polling / Pilih Ketua</label>
                   <input
                     required
                     type="text"
                     value={formData.judul}
                     onChange={(e) => setFormData({ ...formData, judul: e.target.value })}
-                    className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 transition-all outline-none font-bold text-slate-700"
+                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 transition-all outline-none font-bold text-slate-700 dark:text-white"
                     placeholder="Contoh: Pemilihan Ketua Karang Taruna 2026"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Deskripsi (Opsional)</label>
+                  <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Deskripsi (Opsional)</label>
                   <textarea
                     rows={2}
                     value={formData.deskripsi}
                     onChange={(e) => setFormData({ ...formData, deskripsi: e.target.value })}
-                    className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 transition-all outline-none italic font-medium text-slate-600"
+                    className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 transition-all outline-none italic font-medium text-slate-600 dark:text-slate-400"
                     placeholder="Penjelasan singkat tentang polling ini..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Metode Voting</label>
+                  <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Metode Voting</label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, tipe: 'pilihan_ganda' })}
-                      className={`p-4 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${formData.tipe === 'pilihan_ganda' ? 'border-indigo-600 bg-indigo-50 text-indigo-600' : 'border-slate-100 text-slate-400'}`}
+                      className={`p-4 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${formData.tipe === 'pilihan_ganda' ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' : 'border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-600'}`}
                     >
                       Pilihan Ganda
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, tipe: 'manual' })}
-                      className={`p-4 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${formData.tipe === 'manual' ? 'border-indigo-600 bg-indigo-50 text-indigo-600' : 'border-slate-100 text-slate-400'}`}
+                      className={`p-4 rounded-2xl border-2 transition-all font-black text-[10px] uppercase tracking-widest ${formData.tipe === 'manual' ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400' : 'border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-600'}`}
                     >
                       Isi Nama/Input
                     </button>
@@ -223,7 +223,7 @@ export default function PollingManager() {
 
                 {formData.tipe === 'pilihan_ganda' && (
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Opsi Pilihan (Kandidat)</label>
+                    <label className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Opsi Pilihan (Kandidat)</label>
                     {formData.pilihan.map((opt, idx) => (
                       <div key={idx} className="flex gap-2">
                         <input
@@ -231,14 +231,14 @@ export default function PollingManager() {
                           type="text"
                           value={opt}
                           onChange={(e) => handleOptionChange(idx, e.target.value)}
-                          className="flex-1 px-5 py-3 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 transition-all outline-none font-bold text-slate-700 text-sm"
+                          className="flex-1 px-5 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 transition-all outline-none font-bold text-slate-700 dark:text-white text-sm"
                           placeholder={`Opsi ${idx + 1}`}
                         />
                         {formData.pilihan.length > 2 && (
                           <button
                             type="button"
                             onClick={() => handleRemoveOption(idx)}
-                            className="p-3 text-red-400 hover:text-red-600 transition-colors"
+                            className="p-3 text-red-400 dark:text-red-500/70 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                           >
                             <Trash2 className="w-5 h-5" />
                           </button>
@@ -248,7 +248,7 @@ export default function PollingManager() {
                     <button
                       type="button"
                       onClick={handleAddOption}
-                      className="w-full py-3 border-2 border-dashed border-slate-200 text-slate-400 rounded-2xl font-bold text-xs hover:bg-slate-50 transition-all"
+                      className="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 rounded-2xl font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all"
                     >
                       + Tambah Opsi
                     </button>
@@ -259,13 +259,13 @@ export default function PollingManager() {
                     <button
                       type="button"
                       onClick={() => setIsAdding(false)}
-                      className="flex-1 px-8 py-4 border border-slate-100 text-slate-400 rounded-full font-bold hover:bg-slate-50 transition-all uppercase tracking-widest text-[10px]"
+                      className="flex-1 px-8 py-4 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-500 rounded-full font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all uppercase tracking-widest text-[10px]"
                     >
                       Batal
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 px-8 py-4 bg-indigo-600 text-white rounded-full font-bold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-xl shadow-indigo-100 active:scale-95 uppercase tracking-widest text-[10px]"
+                      className="flex-1 px-8 py-4 bg-indigo-600 dark:bg-blue-600 text-white rounded-full font-bold hover:bg-indigo-700 dark:hover:bg-blue-700 transition-all flex items-center justify-center gap-2 shadow-xl shadow-indigo-100 dark:shadow-none active:scale-95 uppercase tracking-widest text-[10px]"
                     >
                       Publikasikan Polling
                     </button>
@@ -335,7 +335,7 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
     try {
       const dataUrl = await toJpeg(cardRef.current, { 
         quality: 0.95,
-        backgroundColor: '#ffffff',
+        backgroundColor: document.documentElement.classList.contains('dark') ? '#0f172a' : '#ffffff',
         filter: (node) => {
           if (node instanceof HTMLElement) {
             return !node.hasAttribute('data-html2canvas-ignore');
@@ -384,13 +384,13 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full group"
+      className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col h-full group"
     >
       <div className="p-8 pb-4">
         <div className="flex items-start justify-between mb-4">
            <span className={`
             px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em]
-            ${poll.status === 'aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}
+            ${poll.status === 'aktif' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600'}
            `}>
             {poll.status === 'aktif' ? 'SEDANG BERJALAN' : 'HASIL SELESAI'}
            </span>
@@ -398,13 +398,13 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
              {showResults && totalVotes > 0 && (
                <button 
                 onClick={() => setViewType(prev => prev === 'list' ? 'chart' : 'list')} 
-                className={`p-2 rounded-lg transition-all ${viewType === 'chart' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-300 hover:text-indigo-600'}`}
+                className={`p-2 rounded-lg transition-all ${viewType === 'chart' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/40' : 'text-slate-300 dark:text-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400'}`}
                 title="Tampilan Grafik"
                >
                  <BarChart3 className="w-4 h-4" />
                </button>
              )}
-             <button onClick={handleCopyLink} className="p-2 text-slate-300 hover:text-indigo-600 rounded-lg transition-all" title="Salin Link">
+             <button onClick={handleCopyLink} className="p-2 text-slate-300 dark:text-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg transition-all" title="Salin Link">
                {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
              </button>
              {role === 'sekretaris' && (
@@ -412,22 +412,22 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
                  <button 
                   onClick={handleDownloadJPG} 
                   disabled={isDownloading}
-                  className="p-2 text-slate-300 hover:text-indigo-600 rounded-lg transition-all" 
+                  className="p-2 text-slate-300 dark:text-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg transition-all" 
                   title="Unduh JPG"
                  >
-                    {isDownloading ? <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent animate-spin rounded-full" /> : <Download className="w-4 h-4" />}
+                    {isDownloading ? <div className="w-4 h-4 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent animate-spin rounded-full" /> : <Download className="w-4 h-4" />}
                  </button>
                  <button 
                   onClick={handleDownloadCSV} 
-                  className="p-2 text-slate-300 hover:text-emerald-600 rounded-lg transition-all" 
+                  className="p-2 text-slate-300 dark:text-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-lg transition-all" 
                   title="Unduh CSV Detail"
                  >
                     <Users className="w-4 h-4" />
                  </button>
-                 <button onClick={onToggleStatus} className="p-2 text-slate-300 hover:text-amber-500 rounded-lg transition-all" title="Toggle Status">
+                 <button onClick={onToggleStatus} className="p-2 text-slate-300 dark:text-slate-700 hover:text-amber-500 dark:hover:text-amber-400 rounded-lg transition-all" title="Toggle Status">
                     {poll.status === 'aktif' ? <CheckCircle2 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                  </button>
-                 <button onClick={onDelete} className="p-2 text-slate-300 hover:text-red-500 rounded-lg transition-all" title="Hapus">
+                 <button onClick={onDelete} className="p-2 text-slate-300 dark:text-slate-700 hover:text-red-500 dark:hover:text-red-400 rounded-lg transition-all" title="Hapus">
                     <Trash2 className="w-4 h-4" />
                  </button>
                </>
@@ -435,8 +435,8 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
            </div>
         </div>
         
-        <h3 className="text-xl font-black text-slate-900 tracking-tight leading-tight">{poll.judul}</h3>
-        {poll.deskripsi && <p className="text-gray-500 text-xs mt-2 italic line-clamp-2">{poll.deskripsi}</p>}
+        <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">{poll.judul}</h3>
+        {poll.deskripsi && <p className="text-gray-500 dark:text-slate-400 text-xs mt-2 italic line-clamp-2">{poll.deskripsi}</p>}
       </div>
 
       <div className="flex-1 p-8 pt-4 space-y-4">
@@ -469,7 +469,7 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
                         {payload?.map((entry: any, index: number) => (
                           <div key={`legend-${index}`} className="flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{entry.value}</span>
+                            <span className="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">{entry.value}</span>
                           </div>
                         ))}
                       </div>
@@ -492,25 +492,25 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
                     onClick={() => handleVote(p)}
                     className={`
                       w-full p-4 rounded-2xl text-left transition-all border-2 relative overflow-hidden group/opt
-                      ${isUserChoice ? 'border-indigo-600 bg-indigo-50/30' : 'border-slate-50 hover:border-slate-200'}
+                      ${isUserChoice ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-50/30 dark:bg-indigo-900/20' : 'border-slate-50 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}
                       ${poll.status !== 'aktif' || userVote ? 'cursor-default' : 'active:scale-[0.98]'}
                     `}
                   >
                     <div className="relative z-10 flex items-center justify-between font-bold text-xs">
-                      <span className="text-slate-700">{p}</span>
-                      {isUserChoice && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                      <span className="text-slate-700 dark:text-slate-300">{p}</span>
+                      {isUserChoice && <CheckCircle2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />}
                     </div>
                     {/* Progress Bar Background */}
                     {showResults && (
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
-                        className={`absolute inset-0 z-0 opacity-10 ${isUserChoice ? 'bg-indigo-600' : 'bg-slate-400'}`}
+                        className={`absolute inset-0 z-0 opacity-10 dark:opacity-20 ${isUserChoice ? 'bg-indigo-600 dark:bg-indigo-400' : 'bg-slate-400 dark:bg-slate-600'}`}
                       />
                     )}
                   </button>
                   {showResults && (
-                    <div className="flex justify-between px-2 text-[9px] font-black uppercase text-slate-400 tracking-widest">
+                    <div className="flex justify-between px-2 text-[9px] font-black uppercase text-slate-400 dark:text-slate-600 tracking-widest">
                       <span>{percentage.toFixed(0)}%</span>
                       <span>{count} Suara</span>
                     </div>
@@ -527,12 +527,12 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
                     value={manualVote}
                     onChange={(e) => setManualVote(e.target.value)}
                     placeholder={poll.tipe === 'manual' ? "Tulis pilihan / nama Anda..." : "Tulis alasan/catatan (opsional)..."}
-                    className="flex-1 px-4 py-3 bg-slate-50 border-none rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
+                    className="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl font-bold text-xs outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-900/20 transition-all dark:text-white"
                   />
                   <button
                     onClick={() => handleVote(manualVote)}
                     disabled={!manualVote.trim()}
-                    className="w-full py-3 bg-indigo-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-700 disabled:bg-slate-200 transition-all shadow-lg shadow-indigo-100"
+                    className="w-full py-3 bg-indigo-600 dark:bg-blue-600 text-white rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-indigo-700 dark:hover:bg-blue-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 transition-all shadow-lg shadow-indigo-100 dark:shadow-none"
                   >
                     Kirim Suara Sekarang
                   </button>
@@ -542,16 +542,16 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
               {showResults && (
                 <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
                    {Object.entries(voteCounts).sort((a,b) => b[1] - a[1]).map(([p, count], idx) => (
-                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
-                        <span className="text-[10px] font-bold text-slate-600">{p}</span>
-                        <span className="bg-white px-2 py-0.5 rounded-lg border border-slate-100 text-[9px] font-black text-indigo-600">{count}</span>
+                     <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
+                        <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400">{p}</span>
+                        <span className="bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-slate-100 dark:border-slate-700 text-[9px] font-black text-indigo-600 dark:text-indigo-400">{count}</span>
                      </div>
                    ))}
                 </div>
               )}
               
               {!showResults && totalVotes > 0 && (
-                <div className="py-4 text-center text-slate-400 italic text-[10px] font-medium border-2 border-dashed border-slate-50 rounded-2xl">
+                <div className="py-4 text-center text-slate-400 dark:text-slate-600 italic text-[10px] font-medium border-2 border-dashed border-slate-50 dark:border-slate-800 rounded-2xl">
                   Hasil voting disembunyikan sampai pengelola mengumumkannya.
                 </div>
               )}
@@ -560,12 +560,12 @@ export function PollCard({ poll, onDelete, onToggleStatus }: { poll: Polling, on
         </div>
       </div>
 
-      <div className="px-8 py-4 bg-slate-50/50 flex items-center justify-between border-t border-slate-50">
-        <div className="flex items-center gap-2 text-slate-400">
+      <div className="px-8 py-4 bg-slate-50/50 dark:bg-slate-800/30 flex items-center justify-between border-t border-slate-50 dark:border-slate-800">
+        <div className="flex items-center gap-2 text-slate-400 dark:text-slate-600">
            <Users className="w-4 h-4" />
            <span className="text-[10px] font-black uppercase tracking-widest">{totalVotes} Berpartisipasi</span>
         </div>
-        <div className="text-[10px] font-bold text-slate-400 italic">
+        <div className="text-[10px] font-bold text-slate-400 dark:text-slate-600 italic">
           {poll.createdAt instanceof Date && !isNaN(poll.createdAt.getTime()) 
             ? format(poll.createdAt, 'd MMM yy', { locale: localeId })
             : 'Pending...'}

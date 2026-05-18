@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { 
   signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
   signOut, 
   onAuthStateChanged,
   type User as FirebaseUser
@@ -36,7 +37,7 @@ export function useAuth() {
             setRole(appUser.role);
           }
         } catch (err) {
-          console.error('Error fetching user profile:', err);
+          console.error('Gagal mengambil profil pengguna:', err);
         }
       } else {
         setUser(null);
@@ -63,7 +64,7 @@ export function useAuth() {
         : usernameOrEmail;
 
       // Tentukan peran otomatis berdasarkan username jika profil belum ada
-      let inferredRole: Role = 'sekretaris';
+      let inferredRole: Role = 'anggota';
       if (username.toLowerCase() === 'bendaharaorbin') {
         inferredRole = 'bendahara';
       } else if (username.toLowerCase() === 'sekretarisorbin') {
@@ -73,7 +74,7 @@ export function useAuth() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const fbUser = userCredential.user;
 
-      // Check if user profile exists, if not create it (for initial setup/demo)
+      // Periksa apakah profil pengguna ada, jika tidak, buat baru (untuk demo/setup awal)
       const userDocRef = doc(db, 'users', fbUser.uid);
       const userDoc = await getDoc(userDocRef);
 
@@ -109,15 +110,49 @@ export function useAuth() {
     }
   };
 
+  const register = async (username: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const email = `${username.toLowerCase()}@organisasi.com`;
+      
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const fbUser = userCredential.user;
+
+      const userDocRef = doc(db, 'users', fbUser.uid);
+      const userData = {
+        username,
+        role: 'anggota' as Role,
+        createdAt: serverTimestamp(),
+      };
+      
+      await setDoc(userDocRef, userData);
+      
+      const appUser: AppUser = {
+        uid: fbUser.uid,
+        username,
+        role: 'anggota',
+      };
+      
+      setUser(appUser);
+      setRole('anggota');
+    } catch (err: any) {
+      setError(err.message || 'Gagal registrasi');
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
       setUser(null);
       setRole(null);
     } catch (err) {
-      console.error('Error signing out:', err);
+      console.error('Gagal keluar sesi:', err);
     }
   };
 
-  return { user, role, login, logout, isLoading, error };
+  return { user, role, login, register, logout, isLoading, error };
 }
